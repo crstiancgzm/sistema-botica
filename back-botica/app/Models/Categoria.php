@@ -10,6 +10,11 @@ class Categoria extends Model
     /** @use HasFactory<\Database\Factories\CategoriaFactory> */
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = ['nombre'];
+
+    public function inventarios()
+    {
+        return $this->belongsToMany(Inventario::class);
+    }
 
 }

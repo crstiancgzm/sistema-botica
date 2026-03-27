@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('nombre')->nullable();
             $table->string('codigo')->nullable();
             $table->integer('cantidad')->nullable();
-            $table->string('presentacion')->nullable();
             $table->boolean('flag_blister')->nullable()->default(false);
             $table->string('precio_blister')->nullable();
             $table->integer('cantidad_blister')->nullable();
@@ -27,10 +26,8 @@ return new class extends Migration
             $table->date('fecha_vencimiento')->nullable();
             $table->string('registro_sanitario')->nullable();
             $table->string('lote')->nullable();
-            $table->string('laboratorio')->nullable();
             $table->string('ubicacion')->nullable();
             $table->decimal('precio', 8, 2)->nullable();
-            $table->string('proveedor')->nullable();
             $table->boolean('flag_disponible')->nullable()->default(true);
             $table->foreignId('proveedor_id')->nullable()->constrained('proveedors')->onDelete('set null');
             $table->foreignId('presentacion_id')->nullable()->constrained('presentacions')->onDelete('set null');

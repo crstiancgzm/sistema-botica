@@ -23,13 +23,23 @@ class InventarioController extends Controller
         );
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreInventarioRequest $request)
     {
-        
-        return response(Inventario::create($request['inventario']), 201);
+        $inventario = Inventario::create($request['inventario']);
+
+        if (!empty(data_get($request, 'inventario.subcategorias'))) {
+            $inventario->subcategorias()->sync(
+                collect(data_get($request, 'inventario.subcategorias'))->pluck('id')
+            );
+        }
+
+        if (!empty(data_get($request, 'inventario.categorias'))) {
+            $inventario->categorias()->sync(
+                collect(data_get($request, 'inventario.categorias'))->pluck('id')
+            );
+        }
+
+        return response($inventario, 201);
 
     }
 
@@ -47,6 +57,15 @@ class InventarioController extends Controller
     public function update(UpdateInventarioRequest $request, Inventario $inventario)
     {
         $inventario->update($request['inventario']);
+        
+        $inventario->subcategorias()->sync(
+            collect(data_get($request, 'inventario.subcategorias'))->pluck('id')
+        );
+        
+        $inventario->categorias()->sync(
+            collect(data_get($request, 'inventario.categorias'))->pluck('id')
+        );
+
         return response()->json($inventario);
     }
 

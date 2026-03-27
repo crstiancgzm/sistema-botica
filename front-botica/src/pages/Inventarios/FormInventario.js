@@ -7,7 +7,7 @@ const formInventarios = {
     presentacion: '',
     flag_blister: 0,
     precio_blister: '',
-    flag_unidad: 0,
+    flag_unidad: 1,
     precio_unidad: '',
     stock_minimo: '',
     precio_oficial: '',
@@ -19,7 +19,8 @@ const formInventarios = {
     precio: '',
     proveedor_id: '',
     fotografias: [],
-    malestares:[]
+    subcategorias: [],
+    categorias: [],
     // catalogo_id: {
     //   id: '',
     //   nombre:'',

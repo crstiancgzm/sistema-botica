@@ -10,13 +10,12 @@ class Inventario extends Model
     /** @use HasFactory<\Database\Factories\InventarioFactory> */
     use HasFactory;
 
-    protected $with = ['proveedor', 'presentacion', 'laboratorio'];
+    protected $with = ['proveedor', 'presentacion', 'laboratorio', 'categorias', 'subcategorias'];
 
     protected $fillable = [
         'nombre',
         'codigo',
         'cantidad',
-        'presentacion',
         'flag_blister',
         'precio_blister',
         'flag_unidad',
@@ -26,13 +25,12 @@ class Inventario extends Model
         'fecha_vencimiento',
         'registro_sanitario',
         'lote',
-        'laboratorio',
         'ubicacion',
         'precio',
         'proveedor_id',
-        'proveedor',
         'laboratorio_id',
-        'presentacion_id'
+        'presentacion_id',
+        'area_id',
     ];
 
     public function proveedor()
@@ -48,5 +46,20 @@ class Inventario extends Model
     public function presentacion()
     {
         return $this->belongsTo(Presentacion::class);
+    }
+
+    public function categorias()
+    {
+        return $this->belongsToMany(Categoria::class);
+    }
+
+    public function subcategorias()
+    {
+        return $this->belongsToMany(Subcategoria::class);
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
     }
 }

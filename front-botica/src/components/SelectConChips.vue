@@ -14,8 +14,8 @@
       @option-selected="seleccionado = $event"
     />
 
-    <div class="text-right q-mt-sm">
-      <q-btn
+    <div class="text-right">
+      <q-btn 
         color="primary"
         icon-right="add"
         :disable="!seleccionado"
@@ -25,7 +25,7 @@
       </q-btn>
     </div>
 
-    <transition-group name="chip-list" tag="div" class="q-gutter-sm q-mt-xs">
+    <transition-group name="chip-list" tag="div" class="q-gutter-xs q-mt-xs">
       <q-chip
         v-for="item in listaOrdenada"
         :key="item.id"
@@ -58,7 +58,7 @@ const props = defineProps({
     default: () => []
   },
   serviceApi: {           // servicio que consume el select
-    type: Object,
+    type: Function,
     required: true
   },
   label: {                // label del select
@@ -75,7 +75,7 @@ const props = defineProps({
   },
   prependIcon: {          // icono del select
     type: String,
-    default: 'mdi-file-document-alert'
+    default: 'mdi-filter-variant'
   },
   chipIcon: {             // icono del chip
     type: String,

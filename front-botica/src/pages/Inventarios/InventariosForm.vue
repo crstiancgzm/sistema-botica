@@ -22,7 +22,7 @@
       :active-color="true ? 'white' : 'primary'" active-bg-color="primary">
       <q-tab name="producto" label="Producto" />
       <q-tab name="categoria" label="Categoria" />
-      <q-tab name="subcategoria" label="Categoria Malestar" />
+      <!-- <q-tab name="subcategoria" label="Categoria Malestar" /> -->
       <q-tab name="fotografias" label="Fotografías" />
     </q-tabs>
   </div>
@@ -56,7 +56,7 @@
                 </template>
               </q-input>
             </div>
-            <div class="col-12 col-md-3">
+            <div class="col-12 col-md-4">
               <q-input dense outlined type="number" v-model="form.inventario.cantidad" label="Cantidad"
                 @change="form.validate(propPath + '.cantidad')" :error="form.invalid(propPath + '.cantidad')"
                 :class="form.invalid(propPath + '.cantidad') ? 'q-mb-sm' : ''">
@@ -81,10 +81,10 @@
                 </template>
               </q-select>
             </div> -->
-            <div class="col-12 col-md-5">
+            <div class="col-12 col-md-4">
               <selectGeneralAsyncrono v-model="form.inventario.presentacion"
               v-model:id="form.inventario.presentacion_id" :add="false" label="Presentación" option-label="nombre"
-              option-value="id" prepend-icon="mdi-file-document-alert" :serviceApi="PresentacionService"
+              option-value="id" prepend-icon="mdi-format-align-justify" :serviceApi="PresentacionService"
               :error="form.invalid(propPath + '.presentacion_id')"
               :errorMessages="form.errors[propPath + '.presentacion_id']" />
             </div>
@@ -157,8 +157,15 @@
                 </template>
               </q-input>
             </div>
+            <div class="col-12 col-md-4">
+              <selectGeneralAsyncrono v-model="form.inventario.area"
+              v-model:id="form.inventario.area_id" :add="false" label="Area" option-label="nombre"
+              option-value="id" prepend-icon="mdi-format-align-justify" :serviceApi="AreaService"
+              :error="form.invalid(propPath + '.area_id')"
+              :errorMessages="form.errors[propPath + '.area_id']" />
+            </div>
             <!-- <div class="col-12 text-subtitle1 text-weight-bold">Registro sanitario</div> -->
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-4">
               <q-input type="date" dense outlined v-model="form.inventario.fecha_vencimiento"
                 label="Fecha de vencimiento" @change="form.validate(propPath + '.fecha_vencimiento')"
                 :error="form.invalid(propPath + '.fecha_vencimiento')"
@@ -197,9 +204,9 @@
               </q-input>
             </div>
             <div class="col-12 col-md-6">
-              <selectGeneralAsyncrono v-model="form.inventario.laboratorio"
+              <selectGeneralAsyncrono 
                 v-model:id="form.inventario.laboratorio_id" :add="false" label="Laboratorio" option-label="nombre"
-                option-value="id" prepend-icon="mdi-file-document-alert" :serviceApi="LaboratorioService"
+                option-value="id" prepend-icon="mdi-format-align-justify" :serviceApi="LaboratorioService"
                 :error="form.invalid(propPath + '.laboratorio_id')"
                 :errorMessages="form.errors[propPath + '.laboratorio_id']" />
             </div>
@@ -216,54 +223,31 @@
             </q-input>
           </div>
           <div class="col-12 col-md-6">
-            <selectGeneralAsyncrono v-model="form.inventario.proveedor"
+            <selectGeneralAsyncrono 
               v-model:id="form.inventario.proveedor_id" :add="false" label="Proveedor" 
               option-label="razon_social" :filterFields="['razon_social']"
-              option-value="id" prepend-icon="mdi-file-document-alert" :serviceApi="ProveedorService"
+              option-value="id" prepend-icon="mdi-format-align-justify" :serviceApi="ProveedorService"
               :error="form.invalid(propPath + '.proveedor_id')"
               :errorMessages="form.errors[propPath + '.proveedor_id']" />
           </div>
           </div>
         </q-tab-panel>
         <q-tab-panel name="categoria">
-          <!-- CATEGORIASSSS -->
-          <!-- <SelectConChips v-model="form.inventario.categorias" v-model:id="form.inventario.categorias_id" :add="false" label="Seleccionar Categorias" 
-          option-label="nombre" :filterFields="['nombre']" option-value="id" prepend-icon="mdi-file-document-alert" :serviceApi="CategoriaService"
-          :error="form.invalid(propPath + '.categorias_id')" :errorMessages="form.errors[propPath + '.categorias_id']" />
-          <div class="text-right">  
-            <q-btn color="primary" icon-right="add">AGREGAR</q-btn>
-          </div> -->
-           <SelectConChips v-model="form.inventario.categorias" :serviceApi="CategoriaService" label="Seleccionar Categorias" chip-icon="mdi-emoticon-sad"/>
-
-        </q-tab-panel>
-        <q-tab-panel name="subcategoria">
-          <!-- SUBCATEGORIASSSS -->
-           <SelectConChips v-model="form.inventario.malestares" :serviceApi="CategoriaMalestarService" label="Seleccionar Malestares" chip-icon="mdi-emoticon-sad"/>
-          <!-- <selectGeneralAsyncrono v-model="malestarSeleccionado" v-model:id="form.inventario.malestar_id" :add="false" label="Seleccionar Malestares" 
-          option-label="nombre" :filterFields="['nombre']" option-value="id" prepend-icon="mdi-file-document-alert" :serviceApi="CategoriaMalestarService"
-          :error="form.invalid(propPath + '.malestar_id')" :errorMessages="form.errors[propPath + '.malestar_id']" @option-selected="selectedRequest" />
-          <div class="text-right">  
-          <q-btn color="primary" icon-right="add" @click="agregarAlArray()">AGREGAR</q-btn>
+          <div class="row q-col-gutter-xs">
+            <div class="col-12 col-md-6">
+              <div class="col-12 text-subtitle1 text-weight-bold q-ml-xs text-primary">Categoria Malestar</div>
+              <q-card class="q-pa-xs" bordered flat>
+                <SelectConChips v-model="form.inventario.subcategorias" :serviceApi="CategoriaMalestarService" label="Asignar Malestares" chip-icon="mdi-emoticon-sad"/>
+              </q-card>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="col-12 text-subtitle1 text-weight-bold q-ml-xs text-primary">Categoria</div>
+              <q-card class="q-pa-xs" bordered flat>
+                <SelectConChips v-model="form.inventario.categorias" :serviceApi="CategoriaService" label="Asignar Categorias" chip-icon="mdi-check-decagram"/>
+              </q-card>
+            </div>
           </div>
 
-<div class="q-gutter-sm q-mt-xs">
-  <q-chip
-    v-for="item in listaOrdenada"
-    :key="item.id"
-    removable
-    color="primary"
-    text-color="white"
-    icon="mdi-emoticon-sad"
-    class="q-pa-md"
-    outline
-    @remove="eliminar(item.id)"
-  >
-    {{ item.nombre }}
-  </q-chip>
-</div>
-<div v-if="errorMensaje" class="text-red-13 q-mt-sm">
-  {{ errorMensaje }}
-</div> -->
         </q-tab-panel>
         <q-tab-panel name="fotografias">
           <div class="col-12">
@@ -295,6 +279,7 @@ import ProveedorService from 'src/services/ProveedorService';
 import selectGeneralAsyncrono from 'src/components/selectGeneralAsyncrono.vue';
 import CategoriaService from 'src/services/CategoriaService';
 import CategoriaMalestarService from 'src/services/CategoriaMalestarService';
+import AreaService from 'src/services/AreaService';
 const userStore = useUserStore();
 const emits = defineEmits(["save"]);
 const props = defineProps({

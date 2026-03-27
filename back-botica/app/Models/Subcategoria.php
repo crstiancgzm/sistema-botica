@@ -10,6 +10,11 @@ class Subcategoria extends Model
     /** @use HasFactory<\Database\Factories\SubcategoriaFactory> */
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = ['nombre'];
+
+    public function inventarios()
+    {
+        return $this->belongsToMany(Inventario::class);
+    }
 
 }
