@@ -11,8 +11,9 @@
 // It's highly recommended to change the default colors
 // to match your app's branding.
 // Tip: Use the "Theme Builder" on Quasar's documentation website.
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Nunito:wght@400;600;700&display=swap');
 
-$primary: #1976d2;
+$primary: #ff84b0;
 $secondary: #26a69a;
 $accent: #9c27b0;
 
@@ -23,3 +24,14 @@ $positive: #21ba45;
 $negative: #c10015;
 $info: #31ccec;
 $warning: #f2c037;
+
+$typography-font-family: 'Nunito', sans-serif;
+.q-card,
+.q-btn,
+.q-field__control {
+  border-radius: 10px !important;
+}
+
+.q-field--focused .q-field__prepend .q-icon {
+  color: #ff84b0 !important;
+}

@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
+use Laravel\Passport\Passport;
+use Illuminate\Contracts\Hashing\Hasher;
+use Illuminate\Hashing\BcryptHasher;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -11,7 +13,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(Hasher::class, function () {
+            return new BcryptHasher([
+                'rounds' => 12,
+                'verify' => false, // 🚨 Esto evita el error
+            ]);
+        });
     }
 
     /**
@@ -19,6 +26,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Passport::enablePasswordGrant();
     }
 }
