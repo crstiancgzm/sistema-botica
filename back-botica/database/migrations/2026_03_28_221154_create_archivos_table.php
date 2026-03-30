@@ -1,0 +1,34 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('archivos', function (Blueprint $table) {
+            $table->id();
+            $table->morphs('archivable');
+            $table->text('nombre')->nullable();
+            $table->longText('url');
+            $table->string('tipo_1')->nullable();
+            $table->string('tipo_2')->nullable();
+            $table->string('aux_1')->nullable();
+            $table->string('aux_2')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('archivos');
+    }
+};

@@ -6,9 +6,13 @@ use App\Models\Inventario;
 use App\Http\Requests\StoreInventarioRequest;
 use App\Http\Requests\UpdateInventarioRequest;
 use Symfony\Component\HttpFoundation\Request;
+use App\Services\ArchivosService;
 
 class InventarioController extends Controller
 {
+    public function __construct(
+        private ArchivosService $archivosService,
+    ) {}
     /**
      * Display a listing of the resource.
      */
@@ -25,7 +29,18 @@ class InventarioController extends Controller
 
     public function store(StoreInventarioRequest $request)
     {
+        $uploadedFiles = [];
+
         $inventario = Inventario::create($request['inventario']);
+
+        $this->archivosService->syncArchivos(
+                $request,
+                $inventario,
+                'archivos', // relacion
+                'fotografias', // folder
+                $uploadedFiles
+            );
+
 
         if (!empty(data_get($request, 'inventario.subcategorias'))) {
             $inventario->subcategorias()->sync(

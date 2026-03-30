@@ -15,7 +15,7 @@
     @click="
     toggleFullScreen(
       imageUrl,
-      { parametro: { nombre: 'Foto Seleccionada' }, url: imageUrl }
+      { parametro: { nombre: 'Foto Seleccionada' }, nombre: imageUrl }
       )
       "
       />
@@ -77,13 +77,13 @@
           "
         >
           <img
-            :src="isLocalImage(value.url) ? value.urlTem : urlApi + value.url"
+            :src="isLocalImage(value.nombre) ? value.urlTem : urlApi + value.nombre"
             alt="Previsualización de imagen"
             style="max-width: 100%; max-height: 90px; border-radius: 10px;"
             class="thumbnail"
             @click="
               toggleFullScreen(
-                isLocalImage(value.url) ? value.urlTem : urlApi + value.url,
+                isLocalImage(value.nombre) ? value.urlTem : urlApi + value.nombre,
                 value
               )
             "
@@ -97,7 +97,7 @@
             style="position:absolute; z-index:3; left:47em; top:35px; opacity:0.9"
             @click="
               toggleFullScreen(
-                isLocalImage(value.url) ? value.urlTem : urlApi + value.url,
+                isLocalImage(value.nombre) ? value.urlTem : urlApi + value.nombre,
                 value
               )
             "
@@ -151,7 +151,7 @@ import Compressor from "compressorjs";
 // const editStore = useEditStore();
 const data = ref({
   id: 0,
-  url: null,
+  nombre: null,
   urlTem: null,
 });
 const imageUrl = ref(null);
@@ -177,7 +177,7 @@ const parametros = ref([]);
 function setValue(values) {}
 
 function agregar() {
-  if (!data.value.url) {
+  if (!data.value.nombre) {
     return; // No hay imagen
   }
 
@@ -186,7 +186,7 @@ function agregar() {
   // }
 
   modelValue.value.fotografias.push({
-    url: data.value.url,
+    nombre: data.value.nombre,
     urlTem: imageUrl.value,
     // comentarios: data.value.comentarios,
   });
@@ -194,25 +194,25 @@ function agregar() {
   // Limpiar
   data.value = {
     id: 0,
-    url: null,
+    nombre: null,
     // comentarios: null,
   };
   imageUrl.value = null;
 }
 // function agregar() {
 //   if (
-//     data.value.url != null &&
+//     data.value.nombre != null &&
 //     data.value.comentarios != ""
 //   ) {
-//     console.log(data.value.url);
+//     console.log(data.value.nombre);
 //     modelValue.value.fotografias.push({
-//       url: data.value.url,
+//       nombre: data.value.nombre,
 //       urlTem: imageUrl.value,
 //       comentarios: data.value.comentarios,
 //     });
 //     data.value = {
 //       id: 0,
-//       url: null,
+//       nombre: null,
 //       comentarios: null,
 //     };
 //     imageUrl.value = null;
@@ -221,15 +221,15 @@ function agregar() {
 function quitar(val) {
   modelValue.value.fotografias = modelValue.value.fotografias.filter((item) => {
     return !(
-      item.url === val.url 
+      item.nombre === val.nombre 
       // && item.comentarios === val.comentarios
     );
   });
 }
 
 
-function isLocalImage(url) {
-  return url instanceof File || url.startsWith("blob:");
+function isLocalImage(nombre) {
+  return nombre instanceof File || nombre.startsWith("blob:");
 }
 
 
@@ -251,7 +251,7 @@ async function capturarConCamara() {
     type: blob.type,
   });
   console.log("img original", file);
-  // data.value.url = file;
+  // data.value.nombre = file;
   new Compressor(file, {
     quality: 0.6,
     convertSize: 500000,
@@ -264,8 +264,8 @@ async function capturarConCamara() {
       const file = new File([result], imagen.path, {
         type: result.type,
       });
-      data.value.url = file;
-      console.log(data.value.url);
+      data.value.nombre = file;
+      console.log(data.value.nombre);
       // Send the compressed image file to server with XMLHttpRequest.
       // axios.post('/path/to/upload', formData).then(() => {
       //   console.log('Upload success');
@@ -279,7 +279,7 @@ async function capturarConCamara() {
 }
 
 function clearImage() {
-  data.value.url = null;
+  data.value.nombre = null;
   imageUrl.value = null;
 }
 
@@ -288,8 +288,8 @@ const isFullScreen = ref(false);
 const selectedImage = ref("");
 const selectedImageName = ref("imagen");
 
-const toggleFullScreen = (url, value) => {
-  selectedImage.value = url;
+const toggleFullScreen = (nombre, value) => {
+  selectedImage.value = nombre;
   selectedImageName.value = value.comentarios;
   isFullScreen.value = true;
 };

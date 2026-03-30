@@ -62,4 +62,9 @@ class Inventario extends Model
     {
         return $this->belongsTo(Area::class);
     }
+
+    public function archivos()
+    {
+        return $this->morphMany(Archivo::class, 'archivable');
+    } 
 }
