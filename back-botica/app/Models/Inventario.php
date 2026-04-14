@@ -10,7 +10,7 @@ class Inventario extends Model
     /** @use HasFactory<\Database\Factories\InventarioFactory> */
     use HasFactory;
 
-    protected $with = ['proveedor', 'presentacion', 'laboratorio', 'categorias', 'subcategorias', 'archivos'];
+    protected $with = ['proveedor', 'presentacion', 'laboratorio', 'categorias', 'subcategorias', 'archivos','area'];
 
     protected $fillable = [
         'nombre',

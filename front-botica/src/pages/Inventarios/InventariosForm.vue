@@ -1,31 +1,27 @@
 <template>
 
   <q-card :style="{ width: '100%', maxWidth: $q.screen.gt.sm ? '40vw' : '100vw' }" class="shadow-1">
-    <!-- <q-card-section class="bg-primary"> -->
-    <!-- <div class="row text-white">
-        <div class="text-h6">{{ title }}</div>
+    <q-card-section class="bg-primary">
+      <div class="row text-white">
+        <div style="font-size: large;">{{ title }}</div>
         <q-space />
         <q-btn v-close-popup round size="sm" unelevated>
-        <q-icon name="close" />
-      </q-btn>
-    </div> -->
-    <!-- <div class="q-ma-sm">
-      <q-btn v-model="mostrarFotografias">Producto</q-btn>
-      <q-btn></q-btn>
-    </div> -->
-    <!-- {{ form }} -->
-  <!-- </q-card-section> -->
-  <div class="q-ma-md">
-    <q-tabs v-model="mostrarFotografias" inline-label dense align="justify" :vertical="$q.screen.lt.sm ? true : false"
-      class="bg-transparent" :class="$q.dark.isActive ? 'text-white' : 'text-primary'"
-      style="font-weight: bolder; border-radius: 10px; " indicator-color="transparent" :breakpoint="0"
-      :active-color="true ? 'white' : 'primary'" active-bg-color="primary">
-      <q-tab name="producto" label="Producto" />
-      <q-tab name="categoria" label="Categoria" />
-      <!-- <q-tab name="subcategoria" label="Categoria Malestar" /> -->
-      <q-tab name="fotografias" label="Fotografías" />
-    </q-tabs>
-  </div>
+          <q-icon name="close" />
+        </q-btn>
+      </div>
+
+    </q-card-section>
+    <div class="q-ma-md">
+      <q-tabs v-model="mostrarFotografias" inline-label dense align="justify" :vertical="$q.screen.lt.sm ? true : false"
+        class="bg-transparent" :class="$q.dark.isActive ? 'text-white' : 'text-primary'"
+        style="font-weight: bolder; border-radius: 10px;" indicator-color="transparent" :breakpoint="0"
+        :active-color="true ? 'white' : 'primary'" active-bg-color="primary">
+        <q-tab name="producto" label="Producto" />
+        <q-tab name="categoria" label="Categoria" />
+        <!-- <q-tab name="subcategoria" label="Categoria Malestar" /> -->
+        <q-tab name="fotografias" label="Fotografías" />
+      </q-tabs>
+    </div>
     <q-form @submit.prevent="submit">
       <!-- <q-card-section class="q-pb-xs"> -->
       <q-tab-panels v-model="mostrarFotografias" animated>
@@ -83,14 +79,14 @@
             </div> -->
             <div class="col-12 col-md-4">
               <selectGeneralAsyncrono v-model="form.inventario.presentacion"
-              v-model:id="form.inventario.presentacion_id" :add="false" label="Presentación" option-label="nombre"
-              option-value="id" prepend-icon="mdi-format-align-justify" :serviceApi="PresentacionService"
-              :error="form.invalid(propPath + '.presentacion_id')"
-              :errorMessages="form.errors[propPath + '.presentacion_id']" />
+                v-model:id="form.inventario.presentacion_id" :add="false" label="Presentación" option-label="nombre"
+                option-value="id" prepend-icon="mdi-format-align-justify" :serviceApi="PresentacionService"
+                :error="form.invalid(propPath + '.presentacion_id')"
+                :errorMessages="form.errors[propPath + '.presentacion_id']" />
             </div>
             <div class="col-12 col-md-4">
               <q-select map-options emit-value dense outlined v-model="form.inventario.flag_blister"
-              :options="[{ label: 'SI', value: 1 }, { label: 'NO', value: 0 }]" label="¿Precio del blister?">
+                :options="[{ label: 'SI', value: 1 }, { label: 'NO', value: 0 }]" label="¿Precio del blister?">
                 <template v-slot:prepend>
                   <q-icon name="mdi-format-list-bulleted-square" />
                 </template>
@@ -112,7 +108,8 @@
             </div>
             <div class="col-12 col-md-4" v-if="form.inventario.flag_blister">
               <q-input dense outlined type="number" v-model="form.inventario.cantidad_blister" label="Cantidad Blister"
-                @change="form.validate(propPath + '.cantidad_blister')" :error="form.invalid(propPath + '.cantidad_blister')"
+                @change="form.validate(propPath + '.cantidad_blister')"
+                :error="form.invalid(propPath + '.cantidad_blister')"
                 :class="form.invalid(propPath + '.cantidad_blister') ? 'q-mb-sm' : ''">
                 <template v-slot:prepend>
                   <q-icon name="description" />
@@ -145,10 +142,10 @@
             </div>
             <div class="col-12 col-md-4">
               <q-input dense outlined v-model="form.inventario.precio_oficial" mask="##.##" prefix="S/. "
-              reverse-fill-mask fill-mask="0" label="Precio real"
-              @change="form.validate(propPath + '.precio_oficial')"
-              :error="form.invalid(propPath + '.precio_oficial')"
-              :class="form.invalid(propPath + '.precio_oficial') ? 'q-mb-sm' : ''">
+                reverse-fill-mask fill-mask="0" label="Precio real"
+                @change="form.validate(propPath + '.precio_oficial')"
+                :error="form.invalid(propPath + '.precio_oficial')"
+                :class="form.invalid(propPath + '.precio_oficial') ? 'q-mb-sm' : ''">
                 <template v-slot:prepend>
                   <q-icon name="description" />
                 </template>
@@ -158,11 +155,10 @@
               </q-input>
             </div>
             <div class="col-12 col-md-4">
-              <selectGeneralAsyncrono v-model="form.inventario.area"
-              v-model:id="form.inventario.area_id" :add="false" label="Area" option-label="nombre"
-              option-value="id" prepend-icon="mdi-format-align-justify" :serviceApi="AreaService"
-              :error="form.invalid(propPath + '.area_id')"
-              :errorMessages="form.errors[propPath + '.area_id']" />
+              <selectGeneralAsyncrono v-model="form.inventario.area" v-model:id="form.inventario.area_id" :add="false"
+                label="Area" option-label="nombre" option-value="id" prepend-icon="mdi-format-align-justify"
+                :serviceApi="AreaService" :error="form.invalid(propPath + '.area_id')"
+                :errorMessages="form.errors[propPath + '.area_id']" />
             </div>
             <!-- <div class="col-12 text-subtitle1 text-weight-bold">Registro sanitario</div> -->
             <div class="col-12 col-md-4">
@@ -204,32 +200,30 @@
               </q-input>
             </div>
             <div class="col-12 col-md-6">
-              <selectGeneralAsyncrono 
-                v-model:id="form.inventario.laboratorio_id" :add="false" label="Laboratorio" option-label="nombre"
-                option-value="id" prepend-icon="mdi-format-align-justify" :serviceApi="LaboratorioService"
-                :error="form.invalid(propPath + '.laboratorio_id')"
+              <selectGeneralAsyncrono v-model:id="form.inventario.laboratorio_id" v-model="form.inventario.laboratorio" :add="false" label="Laboratorio"
+                option-label="nombre" option-value="id" prepend-icon="mdi-format-align-justify"
+                :serviceApi="LaboratorioService" :error="form.invalid(propPath + '.laboratorio_id')"
                 :errorMessages="form.errors[propPath + '.laboratorio_id']" />
             </div>
             <div class="col-12 col-md-6">
               <q-input dense outlined v-model="form.inventario.ubicacion" label="Ubicación"
-              @change="form.validate(propPath + '.ubicacion')" :error="form.invalid(propPath + '.ubicacion')"
-              :class="form.invalid(propPath + '.ubicacion') ? 'q-mb-sm' : ''">
-              <template v-slot:prepend>
-                <q-icon name="description" />
-              </template>
-              <template v-slot:error>
-                <div>{{ form.errors[propPath + '.ubicacion'] }}</div>
-              </template>
-            </q-input>
-          </div>
-          <div class="col-12 col-md-6">
-            <selectGeneralAsyncrono 
-              v-model:id="form.inventario.proveedor_id" :add="false" label="Proveedor" 
-              option-label="razon_social" :filterFields="['razon_social']"
-              option-value="id" prepend-icon="mdi-format-align-justify" :serviceApi="ProveedorService"
-              :error="form.invalid(propPath + '.proveedor_id')"
-              :errorMessages="form.errors[propPath + '.proveedor_id']" />
-          </div>
+                @change="form.validate(propPath + '.ubicacion')" :error="form.invalid(propPath + '.ubicacion')"
+                :class="form.invalid(propPath + '.ubicacion') ? 'q-mb-sm' : ''">
+                <template v-slot:prepend>
+                  <q-icon name="description" />
+                </template>
+                <template v-slot:error>
+                  <div>{{ form.errors[propPath + '.ubicacion'] }}</div>
+                </template>
+              </q-input>
+            </div>
+            <div class="col-12 col-md-6">
+              <selectGeneralAsyncrono v-model:id="form.inventario.proveedor_id" v-model="form.inventario.proveedor" :add="false" label="Proveedor"
+                option-label="razon_social" :filterFields="['razon_social']" option-value="id"
+                prepend-icon="mdi-format-align-justify" :serviceApi="ProveedorService"
+                :error="form.invalid(propPath + '.proveedor_id')"
+                :errorMessages="form.errors[propPath + '.proveedor_id']" />
+            </div>
           </div>
         </q-tab-panel>
         <q-tab-panel name="categoria">
@@ -237,13 +231,15 @@
             <div class="col-12 col-md-6">
               <div class="col-12 text-subtitle1 text-weight-bold q-ml-xs text-primary">Categoria Malestar</div>
               <q-card class="q-pa-xs" bordered flat>
-                <SelectConChips v-model="form.inventario.subcategorias" :serviceApi="CategoriaMalestarService" label="Asignar Malestares" chip-icon="mdi-emoticon-sad"/>
+                <SelectConChips v-model="form.inventario.subcategorias" :serviceApi="CategoriaMalestarService"
+                  label="Asignar Malestares" chip-icon="mdi-emoticon-sad" />
               </q-card>
             </div>
             <div class="col-12 col-md-6">
               <div class="col-12 text-subtitle1 text-weight-bold q-ml-xs text-primary">Categoria</div>
               <q-card class="q-pa-xs" bordered flat>
-                <SelectConChips v-model="form.inventario.categorias" :serviceApi="CategoriaService" label="Asignar Categorias" chip-icon="mdi-check-decagram"/>
+                <SelectConChips v-model="form.inventario.categorias" :serviceApi="CategoriaService"
+                  label="Asignar Categorias" chip-icon="mdi-check-decagram" />
               </q-card>
             </div>
           </div>

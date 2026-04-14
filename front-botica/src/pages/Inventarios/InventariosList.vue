@@ -14,7 +14,7 @@
 
   <q-page>
     <!-- Toolbar -->
-    <div class="q-px-md q-pt-md q-pb-sm row items-center q-gutter-sm">
+    <div class="q-px-md q-pt-sm q-pb-sm row items-center q-gutter-sm">
       <q-btn  color="primary" icon-right="add"
         :label="$q.screen.lt.sm ? '' : 'Agregar producto'" :disable="loading"
         @click="{ formInventarios = true; edit = false; title = 'REGISTRAR PRODUCTO'; editId = null; }" />
@@ -23,7 +23,7 @@
         standout="bg-primary text-white" dense debounce="500"
         v-model="filter" placeholder="Buscar producto..."
       >
-        <template v-slot:prepend><q-icon name="search" /></template>
+        <template v-slot:prepend><q-icon name="search" color="white" /></template>
         <template v-slot:append>
           <q-icon v-if="filter" name="close" class="cursor-pointer" @click="filter = ''" />
         </template>
@@ -46,25 +46,25 @@
       binary-state-sort
       :rows-per-page-options="[12, 16, 24, 32]"
       hide-header
-      class="bg-transparent inv-grid q-px-sm q-pb-lg"
+      class="bg-transparent inv-grid q-px-sm"
       @request="onRequest"
     >
       <template v-slot:item="props">
-        <div class="q-pa-xs col-xs-6 col-sm-4 col-md-3 col-lg-2">
-          <q-card flat class="inv-card bg-white">
+        <div class="q-pa-xs col-xs-12 col-sm-2">
+          <q-card class="inv-card">
 
             <!-- Imagen -->
             <div class="img-wrap">
               <q-img
                 v-if="firstImage(props.row)"
                 :src="firstImage(props.row)"
-                :ratio="1"
+                :ratio="16 / 14"
                 fit="cover"
                 class="inv-img"
               >
                 <template v-slot:error>
                   <div class="img-placeholder">
-                    <q-icon name="mdi-pill" size="32px" color="primary" />
+                    <q-icon name="bi-capsule" size="350px" />
                   </div>
                 </template>
               </q-img>
@@ -77,7 +77,7 @@
               <!-- Badges flotantes -->
               <div class="overlay-top">
                 <q-chip v-if="estaVencido(props.row.fecha_vencimiento)"
-                  color="negative" text-color="white" size="xs" dense icon="dangerous" class="q-ma-xs chip-sm">
+                  color="red-1" text-color="red-8" size="xs" dense icon="dangerous" class="q-ma-xs chip-sm" style="padding: 10px;">
                   Vencido
                 </q-chip>
                 <q-chip v-else-if="vencimientoCercano(props.row.fecha_vencimiento)"
@@ -91,27 +91,27 @@
               </div>
 
               <!-- Stock badge -->
-              <q-badge
+              <q-badge outline
                 :color="props.row.cantidad === 0 ? 'grey-6' : stockBajo(props.row) ? 'negative' : 'positive'"
                 class="stock-badge"
               >
-                {{ props.row.cantidad }}
+                STOCK : {{ props.row.cantidad }}
               </q-badge>
             </div>
 
             <!-- Body -->
             <div class="q-px-sm q-pt-sm q-pb-xs">
-              <div class="inv-nombre text-grey-9">{{ props.row.nombre }}</div>
+              <div class="inv-nombre">{{ props.row.nombre }}</div>
               <div class="row items-center q-gutter-xs q-mt-xs">
-                <span class="text-caption text-grey-5"># {{ props.row.codigo ?? '—' }}</span>
-                <q-chip outline dense size="xs" color="primary" class="q-ma-none chip-pres">
-                  {{ props.row.presentacion?.nombre ?? '—' }}
+                <span class="text-caption text-grey-8 q-ml-mt"># {{ props.row.codigo ?? '—' }}</span>
+                <q-chip dense size="xs" color="blue-1" text-color="blue-8" class="q-ma-sm chip-pres" style="padding: 10px;">
+                  Presentacion : {{ props.row.presentacion?.nombre ?? '—' }}
                 </q-chip>
               </div>
 
               <div class="row items-center q-mt-xs q-gutter-xs">
-                <q-icon name="science" size="14px" color="grey-4" />
-                <span class="text-caption text-grey-6 ellipsis col">
+                <q-icon name="science" size="14px" color="grey-6" />
+                <span class="text-caption text-grey-8 ellipsis col">
                   {{ props.row.laboratorio?.nombre ?? '—' }}
                 </span>
               </div>
@@ -120,11 +120,10 @@
               <div v-if="props.row.categorias?.length" class="row q-gutter-xs q-mt-xs">
                 <q-chip
                   v-for="cat in props.row.categorias.slice(0, 2)" :key="cat.id"
-                  dense size="xs" color="primary" text-color="white" class="q-ma-none chip-cat">
+                  dense size="xs" color="cyan-1" text-color="cyan-8" class="q-ma-none chip-cat">
                   {{ cat.nombre }}
                 </q-chip>
-                <q-chip v-if="props.row.categorias.length > 2" dense size="xs"
-                  color="grey-2" text-color="grey-7" class="q-ma-none chip-cat">
+                <q-chip v-if="props.row.categorias.length > 2" dense size="xs" class="q-ma-none chip-cat">
                   +{{ props.row.categorias.length - 2 }}
                 </q-chip>
               </div>
@@ -134,19 +133,19 @@
 
             <!-- Footer -->
             <div class="row items-center justify-between q-px-sm q-py-xs">
-              <span class="text-subtitle2 text-primary text-weight-bold">
+              <span class="text-subtitle2 text-weight-bold">
                 S/. {{ props.row.precio_oficial }}
               </span>
               <div class="row q-gutter-xs">
-                <q-btn round flat size="xs" color="grey-6" icon="visibility"
+                <q-btn round flat size="sm" color="grey-6" icon="bi-eye"
                   @click="verDetalle(props.row.id)">
                   <q-tooltip>Ver detalle</q-tooltip>
                 </q-btn>
-                <q-btn round flat size="xs" color="primary" icon="edit"
+                <q-btn round flat size="sm" color="positive" icon="bi-pencil"
                   @click="editar(props.row.id)">
                   <q-tooltip>Editar</q-tooltip>
                 </q-btn>
-                <q-btn round flat size="xs" color="negative" icon="delete"
+                <q-btn round flat size="sm" color="negative" icon="bi-trash3"
                   @click="eliminar(props.row.id)">
                   <q-tooltip>Eliminar</q-tooltip>
                 </q-btn>
@@ -167,7 +166,7 @@
     </q-table>
 
     <q-inner-loading :showing="loading">
-      <q-spinner-cube size="80px" color="primary" />
+      <q-spinner-pie size="200px" color="primary" />
     </q-inner-loading>
   </q-page>
 </template>
@@ -256,7 +255,7 @@ function verDetalle(id) {
 }
 
 async function editar(id) {
-  title.value = "Editar Inventario";
+  title.value = "EDITAR INVENTARIO";
   formInventarios.value = true;
   edit.value  = true;
   editId.value = id;
@@ -283,7 +282,7 @@ async function eliminar(id) {
 }
 
 .inv-card {
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
@@ -325,22 +324,17 @@ async function eliminar(id) {
   position: absolute;
   top: 6px;
   right: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 7px;
-  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 4px;
+  border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* Nombre del producto — 2 líneas máx */
 .inv-nombre {
-  font-size: 13px;
   font-weight: 600;
-  line-height: 1.35;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 /* Chips pequeños */
@@ -355,9 +349,9 @@ async function eliminar(id) {
   padding: 0 5px !important;
 }
 .chip-cat {
-  height: 17px !important;
   font-size: 10px !important;
-  padding: 0 5px !important;
+  padding: 10px !important;
+  margin: 4px;
 }
 
 /* Texto truncado en 1 línea */
