@@ -1,82 +1,173 @@
 <template>
   <q-dialog v-model="formInventarios" persistent>
-    <InventariosForm :title="title" :edit="edit" :id="editId" ref="inventariosformRef" prop-path="inventario"
-      @save="save"></InventariosForm>
+    <InventariosForm :title="title" :edit="edit" :id="editId" ref="inventariosformRef"
+      prop-path="inventario" @save="save" />
   </q-dialog>
+
+  <q-dialog v-model="detalleDialog">
+    <InventarioDetalle
+      v-if="detalleId"
+      :inventario-id="detalleId"
+      @editar="(id) => { detalleDialog = false; editar(id) }"
+    />
+  </q-dialog>
+
   <q-page>
-    <!-- <div class="q-pa-md q-gutter-sm">
-      <q-breadcrumbs>
-        <q-breadcrumbs-el icon="home" />
-
-        <q-breadcrumbs-el label="Productos" icon="mdi-package-variant" />
-      </q-breadcrumbs>
-    </div>
-    <q-separator /> -->
-    <div class="q-gutter-xs q-pa-sm">
-    </div>
-    <q-card class="q-ma-xs q-pa-md" flat :bordered="!$q.dark.isActive">
-      <div class="row q-col-gutter-xs">
-        <div>
-          <q-btn class="q-pa-sm" outline color="primary" :disable="loading" :label="$q.screen.lt.sm ? '' : 'Agregar'" icon-right="add"
-            @click="{ formInventarios = true; edit = false; title = 'REGISTRAR PRODUCTO'; editId = null;}" />
-        </div>
-        <div class="col">
-          <q-input active-class="text-white" standout="bg-primary" color="white" dense debounce="500" v-model="filter"
-            placeholder="Buscar">
-            <template v-slot:append>
-              <q-icon name="search" />
-            </template>
-          </q-input>
-        </div>
+    <!-- Toolbar -->
+    <div class="q-px-md q-pt-md q-pb-sm row items-center q-gutter-sm">
+      <q-btn  color="primary" icon-right="add"
+        :label="$q.screen.lt.sm ? '' : 'Agregar producto'" :disable="loading"
+        @click="{ formInventarios = true; edit = false; title = 'REGISTRAR PRODUCTO'; editId = null; }" />
+      <q-input
+        class="col"
+        standout="bg-primary text-white" dense debounce="500"
+        v-model="filter" placeholder="Buscar producto..."
+      >
+        <template v-slot:prepend><q-icon name="search" /></template>
+        <template v-slot:append>
+          <q-icon v-if="filter" name="close" class="cursor-pointer" @click="filter = ''" />
+        </template>
+      </q-input>
+      <div class="text-caption text-grey-6" v-if="!loading">
+        {{ pagination.rowsNumber }} resultado{{ pagination.rowsNumber !== 1 ? 's' : '' }}
       </div>
-    </q-card>
-    <q-card class="q-ma-xs" flat :bordered="!$q.dark.isActive">
-      <q-table flat :bordered="!$q.dark.isActive" table-header-class="my-custom" :rows-per-page-options="[7, 10, 15]"
-        class="my-sticky-header-table htable q-ma-sm" ref="tableRef" color="red-13" :rows="rows" :columns="columns"
-        row-key="id" v-model:pagination="pagination" :loading="loading" :filter="filter" binary-state-sort
-        @request="onRequest">
-        <!-- <template v-slot:top-right>
+    </div>
 
-        </template> -->
-        <template v-slot:header="props">
-          <q-tr :props="props">
-            <q-th v-for="col in props.cols" :key="col.name" :props="props">
-              {{ col.label }}
-            </q-th>
-            <q-th auto-width> Acciones </q-th>
-          </q-tr>
-        </template>
+    <!-- Grid -->
+    <q-table
+      ref="tableRef"
+      grid
+      :rows="rows"
+      :columns="columns"
+      row-key="id"
+      v-model:pagination="pagination"
+      :loading="loading"
+      :filter="filter"
+      binary-state-sort
+      :rows-per-page-options="[12, 16, 24, 32]"
+      hide-header
+      class="bg-transparent inv-grid q-px-sm q-pb-lg"
+      @request="onRequest"
+    >
+      <template v-slot:item="props">
+        <div class="q-pa-xs col-xs-6 col-sm-4 col-md-3 col-lg-2">
+          <q-card flat class="inv-card bg-white">
 
-        <template v-slot:body="props">
-          <q-tr :props="props">
-            <q-td v-for="col in props.cols" :key="col.name" :props="props">
-              <template v-if="col.name === 'flag_blister'">
-                <q-chip :color="props.row.flag_blister === 1 ? 'positive' : 'red-13'" text-color="white" size="sm">
-                  s/. {{ props.row.flag_blister === 1 ? props.row.precio_blister : 'S/P' }}
+            <!-- Imagen -->
+            <div class="img-wrap">
+              <q-img
+                v-if="firstImage(props.row)"
+                :src="firstImage(props.row)"
+                :ratio="1"
+                fit="cover"
+                class="inv-img"
+              >
+                <template v-slot:error>
+                  <div class="img-placeholder">
+                    <q-icon name="mdi-pill" size="32px" color="primary" />
+                  </div>
+                </template>
+              </q-img>
+              <div v-else class="img-placeholder" style="padding-top:100%">
+                <div class="placeholder-inner">
+                  <q-icon name="mdi-pill" size="32px" color="primary" />
+                </div>
+              </div>
+
+              <!-- Badges flotantes -->
+              <div class="overlay-top">
+                <q-chip v-if="estaVencido(props.row.fecha_vencimiento)"
+                  color="negative" text-color="white" size="xs" dense icon="dangerous" class="q-ma-xs chip-sm">
+                  Vencido
                 </q-chip>
-              </template>
-              <template v-else-if="col.name === 'flag_unidad'">
-                <q-chip :color="props.row.flag_unidad === 1 ? 'positive' : 'red-13'" text-color="white" size="sm">
-                  s/. {{ props.row.flag_unidad === 1 ? props.row.precio_unidad : 'S/P' }}
+                <q-chip v-else-if="vencimientoCercano(props.row.fecha_vencimiento)"
+                  color="warning" text-color="white" size="xs" dense icon="schedule" class="q-ma-xs chip-sm">
+                  Vence pronto
                 </q-chip>
-              </template>
-              <template v-else>
-                {{ col.value }}
-              </template>
-            </q-td>
-            <q-td auto-width>
-              <q-btn size="sm" text-color="cyan-8" color="cyan-1" outline round @click="editar(props.row.id)"
-                icon="edit" class="q-mr-xs">
-              </q-btn>
-              <q-btn size="sm" text-color="red-13" color="red-1" outline round @click="eliminar(props.row.id)"
-                icon="delete" />
-            </q-td>
-          </q-tr>
-        </template>
-      </q-table>
-    </q-card>
+                <q-chip v-if="stockBajo(props.row)"
+                  color="negative" text-color="white" size="xs" dense icon="warning" class="q-ma-xs chip-sm">
+                  Stock bajo
+                </q-chip>
+              </div>
+
+              <!-- Stock badge -->
+              <q-badge
+                :color="props.row.cantidad === 0 ? 'grey-6' : stockBajo(props.row) ? 'negative' : 'positive'"
+                class="stock-badge"
+              >
+                {{ props.row.cantidad }}
+              </q-badge>
+            </div>
+
+            <!-- Body -->
+            <div class="q-px-sm q-pt-sm q-pb-xs">
+              <div class="inv-nombre text-grey-9">{{ props.row.nombre }}</div>
+              <div class="row items-center q-gutter-xs q-mt-xs">
+                <span class="text-caption text-grey-5"># {{ props.row.codigo ?? '—' }}</span>
+                <q-chip outline dense size="xs" color="primary" class="q-ma-none chip-pres">
+                  {{ props.row.presentacion?.nombre ?? '—' }}
+                </q-chip>
+              </div>
+
+              <div class="row items-center q-mt-xs q-gutter-xs">
+                <q-icon name="science" size="14px" color="grey-4" />
+                <span class="text-caption text-grey-6 ellipsis col">
+                  {{ props.row.laboratorio?.nombre ?? '—' }}
+                </span>
+              </div>
+
+              <!-- Categorías (máx 2) -->
+              <div v-if="props.row.categorias?.length" class="row q-gutter-xs q-mt-xs">
+                <q-chip
+                  v-for="cat in props.row.categorias.slice(0, 2)" :key="cat.id"
+                  dense size="xs" color="primary" text-color="white" class="q-ma-none chip-cat">
+                  {{ cat.nombre }}
+                </q-chip>
+                <q-chip v-if="props.row.categorias.length > 2" dense size="xs"
+                  color="grey-2" text-color="grey-7" class="q-ma-none chip-cat">
+                  +{{ props.row.categorias.length - 2 }}
+                </q-chip>
+              </div>
+            </div>
+
+            <q-separator />
+
+            <!-- Footer -->
+            <div class="row items-center justify-between q-px-sm q-py-xs">
+              <span class="text-subtitle2 text-primary text-weight-bold">
+                S/. {{ props.row.precio_oficial }}
+              </span>
+              <div class="row q-gutter-xs">
+                <q-btn round flat size="xs" color="grey-6" icon="visibility"
+                  @click="verDetalle(props.row.id)">
+                  <q-tooltip>Ver detalle</q-tooltip>
+                </q-btn>
+                <q-btn round flat size="xs" color="primary" icon="edit"
+                  @click="editar(props.row.id)">
+                  <q-tooltip>Editar</q-tooltip>
+                </q-btn>
+                <q-btn round flat size="xs" color="negative" icon="delete"
+                  @click="eliminar(props.row.id)">
+                  <q-tooltip>Eliminar</q-tooltip>
+                </q-btn>
+              </div>
+            </div>
+
+          </q-card>
+        </div>
+      </template>
+
+      <template v-slot:no-data>
+        <div class="full-width column flex-center q-pa-xl text-grey-5">
+          <q-icon name="mdi-package-variant-remove" size="64px" class="q-mb-md" />
+          <div class="text-h6">Sin productos</div>
+          <div class="text-caption">Agrega el primer producto con el botón Agregar</div>
+        </div>
+      </template>
+    </q-table>
+
     <q-inner-loading :showing="loading">
-        <q-spinner-cube size="180px" :color="$q.dark.isActive ? 'white' : 'primary'" />
+      <q-spinner-cube size="80px" color="primary" />
     </q-inner-loading>
   </q-page>
 </template>
@@ -86,178 +177,193 @@ import { ref, onMounted } from "vue";
 import InventarioService from "src/services/InventarioService";
 import { useQuasar } from "quasar";
 import InventariosForm from "src/pages/Inventarios/InventariosForm.vue";
-const $q = useQuasar();
+import InventarioDetalle from "src/pages/Inventarios/InventarioDetalle.vue";
+
+const $q      = useQuasar();
+const API_URL = process.env.API_BACKEND_URL;
+
 const columns = [
-  {
-    name: "id",
-    label: "ID",
-    aling: "center",
-    field: (row) => row.id,
-    sortable: true,
-  },
-  {
-    name: "nombre",
-    label: "NOMBRE DEL PRODUCTO",
-    aling: "center",
-    field: (row) => row.nombre,
-    sortable: true,
-  },
-  {
-    name: "fecha_vencimiento",
-    label: "FECHA VENCIMIENTO",
-    aling: "center",
-    field: (row) => row.fecha_vencimiento,
-    sortable: true,
-  },
-  {
-    name: "cantidad_presentacion",
-    label: "CANTIDAD Y PRESENTACIÓN",
-    aling: "center",
-    field: (row) => row.cantidad + " " + row.presentacion,
-    sortable: true,
-  },
-  {
-    name: "flag_blister",
-    label: "BLISTER",
-    aling: "center",
-    field: (row) => row.flag_blister,
-    sortable: true,
-  },
-  {
-    name: "flag_unidad",
-    label: "UNIDAD",
-    aling: "center",
-    field: (row) => row.flag_unidad,
-    sortable: true,
-  },
-  {
-    name: "lote",
-    label: "LOTE",
-    aling: "center",
-    field: (row) => row.lote,
-    sortable: true,
-  }
+  { name: "nombre",            field: (row) => row.nombre,            sortable: true },
+  { name: "codigo",            field: (row) => row.codigo,            sortable: true },
+  { name: "cantidad",          field: (row) => row.cantidad,          sortable: true },
+  { name: "precio_oficial",    field: (row) => row.precio_oficial,    sortable: true },
+  { name: "fecha_vencimiento", field: (row) => row.fecha_vencimiento, sortable: true },
 ];
-const tableRef = ref();
-const formInventarios = ref(false);
+
+const tableRef           = ref();
+const formInventarios    = ref(false);
 const inventariosformRef = ref();
-const title = ref("");
-const edit = ref(false);
-const editId = ref();
-const rows = ref([]);
-const filter = ref("");
-const loading = ref(false);
-const pagination = ref({
-  sortBy: "id",
-  descending: true,
-  page: 1,
-  rowsPerPage: 7,
-  rowsNumber: 10,
+const detalleDialog      = ref(false);
+const detalleId          = ref(null);
+const title              = ref("");
+const edit               = ref(false);
+const editId             = ref();
+const rows               = ref([]);
+const filter             = ref("");
+const loading            = ref(false);
+const pagination         = ref({
+  sortBy: "id", descending: true, page: 1, rowsPerPage: 12, rowsNumber: 0,
 });
+
+function firstImage(row) {
+  const archivo = row.archivos?.[0];
+  if (!archivo?.url) return null;
+  return `${API_URL}/storage/${archivo.url}`;
+}
+
+function stockBajo(row) {
+  return row.stock_minimo != null && row.cantidad > 0 && row.cantidad <= row.stock_minimo;
+}
+
+function diasParaVencer(fecha) {
+  if (!fecha) return null;
+  return (new Date(fecha) - new Date()) / (1000 * 60 * 60 * 24);
+}
+
+function estaVencido(fecha) {
+  const dias = diasParaVencer(fecha);
+  return dias !== null && dias < 0;
+}
+
+function vencimientoCercano(fecha) {
+  const dias = diasParaVencer(fecha);
+  return dias !== null && dias >= 0 && dias <= 30;
+}
 
 async function onRequest(props) {
   const { page, rowsPerPage, sortBy, descending } = props.pagination;
-  const filter = props.filter;
   loading.value = true;
-
-  const fetchCount = rowsPerPage === 0 ? 0 : rowsPerPage;
   const order_by = descending ? "-" + sortBy : sortBy;
   const { data, total = 0 } = await InventarioService.getData({
-    params: { rowsPerPage: fetchCount, page, search: filter, order_by },
+    params: { rowsPerPage: rowsPerPage || 0, page, search: props.filter, order_by },
   });
-  console.log(data);
-  // clear out existing data and add new
   rows.value.splice(0, rows.value.length, ...data);
-  // don't forget to update local pagination object
-  !total
-    ? (pagination.value.rowsNumber = data.length)
-    : (pagination.value.rowsNumber = total);
-  pagination.value.page = page;
-  pagination.value.rowsPerPage = rowsPerPage;
-  pagination.value.sortBy = sortBy;
-  pagination.value.descending = descending;
-  // ...and turn of loading indicator
+  pagination.value = { ...pagination.value, rowsNumber: total || data.length, page, rowsPerPage, sortBy, descending };
   loading.value = false;
 }
 
-
-onMounted(() => {
-  tableRef.value.requestServerInteraction();
-});
+onMounted(() => tableRef.value.requestServerInteraction());
 
 const save = () => {
   formInventarios.value = false;
   tableRef.value.requestServerInteraction();
-  $q.notify({
-    type: "positive",
-    message: "Guardado con Exito.",
-    position: "top-right",
-    progress: true,
-    timeout: 1000,
-  });
+  $q.notify({ type: "positive", message: "Guardado con éxito.", position: "top-right", progress: true, timeout: 1500 });
 };
+
+function verDetalle(id) {
+  detalleId.value = id;
+  detalleDialog.value = true;
+}
+
 async function editar(id) {
   title.value = "Editar Inventario";
   formInventarios.value = true;
-  edit.value = true;
+  edit.value  = true;
   editId.value = id;
   const row = await InventarioService.get(id);
-  console.log(row);
-
-  inventariosformRef.value.form.setData({ inventario: row });
-
+  inventariosformRef.value.form.setData({ inventario: { archivos: [], ...row } });
 }
 
 async function eliminar(id) {
   $q.dialog({
-    title: "¿Estas seguro de eliminar este registro?",
+    title: "¿Estás seguro?",
     message: "Este proceso es irreversible.",
-    cancel: true,
-    persistent: true,
+    cancel: true, persistent: true,
   }).onOk(async () => {
     await InventarioService.delete(id);
     tableRef.value.requestServerInteraction();
-    $q.notify({
-      type: "positive",
-      message: "Eliminado con Exito.",
-      position: "top-right",
-      progress: true,
-      timeout: 1000,
-    });
+    $q.notify({ type: "positive", message: "Eliminado con éxito.", position: "top-right", progress: true, timeout: 1500 });
   });
 }
 </script>
 
+<style scoped>
+.inv-grid :deep(.q-table__grid-content) {
+  padding: 0;
+}
 
-<style lang="sass">
-.my-sticky-header-table
-  /* height or max-height is important */
-  height: 75vh
+.inv-card {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.inv-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+}
 
-  .q-table__top,
-  .q-table__bottom,
-  thead tr:first-child th
-    /* bg color is important for th; just specify one */
+/* Imagen */
+.img-wrap {
+  position: relative;
+  background: #f5f5f5;
+}
+.inv-img {
+  border-radius: 0;
+}
+.img-placeholder {
+  position: relative;
+  background: linear-gradient(135deg, #fce4ec, #fdf2f5);
+}
+.placeholder-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+/* Overlays */
+.overlay-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-wrap: wrap;
+}
+.stock-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 7px;
+  border-radius: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
 
-  thead tr th
-    position: sticky
-    z-index: 1
-    background-color: $primary
-    color: white
-  thead tr:first-child th
-    top: 0
+/* Nombre del producto — 2 líneas máx */
+.inv-nombre {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-  /* this is when the loading indicator appears */
-  &.q-table--loading thead tr:last-child th
-    /* height of all previous header rows */
-    top: 48px
+/* Chips pequeños */
+.chip-sm {
+  font-size: 10px !important;
+  padding: 0 6px !important;
+  height: 18px !important;
+}
+.chip-pres {
+  height: 18px !important;
+  font-size: 10px !important;
+  padding: 0 5px !important;
+}
+.chip-cat {
+  height: 17px !important;
+  font-size: 10px !important;
+  padding: 0 5px !important;
+}
 
-  /* prevent scrolling behind sticky top row on focus */
-  tbody
-    /* height of all previous header rows */
-    scroll-margin-top: 48px
-
-.htable
-  #height: calc(100vh - 157px)
+/* Texto truncado en 1 línea */
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 </style>

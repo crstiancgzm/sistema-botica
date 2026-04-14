@@ -1,5 +1,5 @@
 const links1 = [
-  { icon: 'dashboard', text: 'Dashboard'},
+  { icon: 'dashboard', text: 'Dashboard', route: 'Dashboard' },
 //   { icon: 'person', text: 'For you' },
 //   { icon: 'star_border', text: 'Favourites' },
 //   { icon: 'search', text: 'Saved searches' }

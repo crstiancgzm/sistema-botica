@@ -18,7 +18,7 @@ const formInventarios = {
     ubicacion: '',
     precio: '',
     proveedor_id: '',
-    fotografias: [],
+    archivos: [],
     subcategorias: [],
     categorias: [],
     // catalogo_id: {

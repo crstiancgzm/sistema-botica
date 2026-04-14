@@ -18,11 +18,11 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') },
-      // { 
-      //   path: 'dashboard', 
-      //   name: 'Dashboard',
-      //   component: () => import('pages/DashboardPage.vue') 
-      // },
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('pages/Dashboard/DashboardPage.vue')
+      },
       // { 
       //   path: 'roles', 
       //   name: 'Role',

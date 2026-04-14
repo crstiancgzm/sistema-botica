@@ -16,8 +16,15 @@ class ArchivosService
 		$existingArchivos = $model->$relation ? $model->$relation->pluck('id')->toArray() : [];
 		$updatedArchivos = [];
 
-		// Soporta datos anidados bajo 'papeleta.archivos' o directamente 'archivos'
+		// Soporta datos anidados bajo '{parent}.archivos' o directamente 'archivos'
 		$relationPath = $relation;
+		foreach (array_keys($request->all()) as $parentKey) {
+			$nested = $request->input("$parentKey.$relation");
+			if (is_array($nested)) {
+				$relationPath = "$parentKey.$relation";
+				break;
+			}
+		}
 
 		if ($request->has($relationPath)) {
 			$archivos = $request->input($relationPath);
@@ -43,7 +50,7 @@ class ArchivosService
 							$file = $request->file($fileKey);
 							$baseName = isset($archivo['nombre']) ? $archivo['nombre'] : pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 							$sanitizedName = str_replace(' ', '_', $baseName);
-							$extension = $file->getClientOriginalExtension() ?: 'pdf';
+							$extension = $file->getClientOriginalExtension() ?: ($file->guessExtension() ?: 'jpg');
 							$filename = $sanitizedName . '.' . $extension;
 
 							// Guardar usando el nombre saneado en el disco público

@@ -54,13 +54,12 @@
     Las Fotografías son Requeridas
   </div> -->
 
-  {{ modelValue }}
   <!-- {{ urlApi }} -->
   <q-list
     dense
     bordered
     class="rounded-borders q-mt-xs"
-    v-for="(value, key) in modelValue.fotografias"
+    v-for="(value, key) in modelValue.archivos"
     :key="key"
     
   >
@@ -77,13 +76,13 @@
           "
         >
           <img
-            :src="isLocalImage(value.nombre) ? value.urlTem : urlApi + value.nombre"
+            :src="isLocalImage(value.url) ? value.urlTem : urlApi + '/storage/' + value.url"
             alt="Previsualización de imagen"
             style="max-width: 100%; max-height: 90px; border-radius: 10px;"
             class="thumbnail"
             @click="
               toggleFullScreen(
-                isLocalImage(value.nombre) ? value.urlTem : urlApi + value.nombre,
+                isLocalImage(value.url) ? value.urlTem : urlApi + '/storage/' + value.url,
                 value
               )
             "
@@ -97,7 +96,7 @@
             style="position:absolute; z-index:3; left:47em; top:35px; opacity:0.9"
             @click="
               toggleFullScreen(
-                isLocalImage(value.nombre) ? value.urlTem : urlApi + value.nombre,
+                isLocalImage(value.url) ? value.urlTem : urlApi + '/storage/' + value.url,
                 value
               )
             "
@@ -185,10 +184,9 @@ function agregar() {
   //   return; // Comentario vacío
   // }
 
-  modelValue.value.fotografias.push({
-    nombre: data.value.nombre,
+  modelValue.value.archivos.push({
+    url: data.value.nombre,
     urlTem: imageUrl.value,
-    // comentarios: data.value.comentarios,
   });
 
   // Limpiar
@@ -219,11 +217,8 @@ function agregar() {
 //   }
 // }
 function quitar(val) {
-  modelValue.value.fotografias = modelValue.value.fotografias.filter((item) => {
-    return !(
-      item.nombre === val.nombre 
-      // && item.comentarios === val.comentarios
-    );
+  modelValue.value.archivos = modelValue.value.archivos.filter((item) => {
+    return !(item.url === val.url);
   });
 }
 
@@ -247,29 +242,16 @@ async function capturarConCamara() {
   const response = await fetch(imagen.webPath);
   const blob = await response.blob();
 
-  const file = new File([blob], imagen.path, {
-    type: blob.type,
-  });
-  console.log("img original", file);
-  // data.value.nombre = file;
+  const ext = blob.type.split('/')[1] || 'jpg';
+  const filename = `foto_${Date.now()}.${ext}`;
+  const file = new File([blob], filename, { type: blob.type });
+
   new Compressor(file, {
     quality: 0.6,
     convertSize: 500000,
-
-    // The compression process is asynchronous,
-    // which means you have to access the `result` in the `success` hook function.
     success(result) {
-      // The third parameter is required for server
-      console.log("imagen despues", result);
-      const file = new File([result], imagen.path, {
-        type: result.type,
-      });
-      data.value.nombre = file;
-      console.log(data.value.nombre);
-      // Send the compressed image file to server with XMLHttpRequest.
-      // axios.post('/path/to/upload', formData).then(() => {
-      //   console.log('Upload success');
-      // });
+      const compressedFile = new File([result], filename, { type: result.type });
+      data.value.nombre = compressedFile;
     },
     error(err) {
       console.log(err.message);
