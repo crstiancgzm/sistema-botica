@@ -18,6 +18,7 @@ class Inventario extends Model
         'cantidad',
         'flag_blister',
         'precio_blister',
+        'cantidad_blister',
         'flag_unidad',
         'precio_unidad',
         'stock_minimo',
