@@ -7,9 +7,9 @@ const links1 = [
 
 const links2 = [
     { icon: 'bi-building', text: 'Areas' },
+    { icon: 'bi-people-fill', text: 'Usuarios' },
     { icon: 'bi-person-fill-lock', text: 'Roles' },
     { icon: 'bi-person-fill-lock', text: 'Permisos' },
-    { icon: 'bi-people-fill', text: 'Usuarios' },
 ];
 
 const links3 = [

@@ -26,7 +26,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'area_id'
     ];
+
+    protected $with = ['area'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -49,5 +52,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class);
     }
 }

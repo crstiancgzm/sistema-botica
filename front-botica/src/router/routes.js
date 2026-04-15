@@ -23,26 +23,26 @@ const routes = [
         name: 'Dashboard',
         component: () => import('pages/Dashboard/DashboardPage.vue')
       },
-      // { 
-      //   path: 'roles', 
-      //   name: 'Role',
-      //   component: () => import('pages/Roles/RolesList.vue') 
-      // },
-      // { 
-      //   path: 'permisos', 
-      //   name: 'Permissions',
-      //   component: () => import('pages/Permisos/PermisosList.vue') 
-      // },
+      { 
+        path: 'roles', 
+        name: 'Roles',
+        component: () => import('pages/Roles/RolesList.vue') 
+      },
+      { 
+        path: 'permisos', 
+        name: 'Permisos',
+        component: () => import('pages/Permisos/PermisosList.vue') 
+      },
       { 
         path: 'areas', 
         name: 'Areas',
         component: () => import('pages/Areas/AreasList.vue') 
       },
-      // { 
-      //   path: 'users', 
-      //   name: 'Users',
-      //   component: () => import('pages/Usuarios/UsuariosList.vue') 
-      // },
+      { 
+        path: 'users', 
+        name: 'Usuarios',
+        component: () => import('pages/Usuarios/UsuariosList.vue') 
+      },
       { 
         path: 'inventario', 
         name: 'Inventario',

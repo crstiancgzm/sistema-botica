@@ -62,6 +62,7 @@ class UserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->filled('password') ? bcrypt($request->password) : $usuario->password,
+                'area_id' => $request->area_id,
             ]);
 
             return response()->json($usuario);

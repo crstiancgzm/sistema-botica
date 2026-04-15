@@ -7,7 +7,8 @@
     <div class="row no-wrap" style="min-height: inherit">
 
       <!-- ── SIDEBAR FILTROS ──────────────────────────── -->
-      <div class="venta-sidebar q-pa-sm" :class="[$q.screen.lt.md ? 'sidebar-hidden' : '', $q.dark.isActive ? 'bg-dark' : 'bg-white']">
+      <div class="venta-sidebar q-pa-sm"
+        :class="[($q.screen.lt.md || !sidebarOpen) ? 'sidebar-hidden' : '', $q.dark.isActive ? 'bg-dark' : 'bg-white']">
 
         <div class="text-overline text-grey-5 q-mb-sm">FILTROS</div>
 
@@ -68,6 +69,16 @@
         <!-- Toolbar -->
         <q-card class="q-mr-xs q-ml-sm q-mt-md" flat :bordered="!$q.dark.isActive">
         <div class="q-px-md q-pt-sm q-pb-sm row items-center q-gutter-sm">
+          <!-- Toggle sidebar (desktop) -->
+          <q-btn v-if="$q.screen.gt.sm" flat round dense
+            :icon="sidebarOpen ? 'bi-layout-sidebar' : 'bi-layout-sidebar-reverse'"
+            :color="filtrosActivos > 0 && !sidebarOpen ? 'primary' : ''"
+            @click="sidebarOpen = !sidebarOpen">
+            <q-badge v-if="filtrosActivos > 0 && !sidebarOpen" color="primary" floating>{{ filtrosActivos }}</q-badge>
+            <q-tooltip>{{ sidebarOpen ? 'Ocultar filtros' : 'Mostrar filtros' }}</q-tooltip>
+          </q-btn>
+
+          <!-- Toggle filtros (mobile) -->
           <q-btn v-if="$q.screen.lt.md" flat round dense icon="bi-funnel"
             :color="filtrosActivos > 0 ? 'primary' : 'grey-6'"
             @click="filtrosMobileOpen = true">
@@ -114,7 +125,7 @@
              @request="onRequest"
            >
              <template v-slot:item="props">
-               <div class="q-pa-xs col-xs-12 col-sm-2">
+               <div class="col-xs-12 col-sm-2">
                  <q-card class="inv-card">
    
                    <!-- Imagen -->
@@ -192,10 +203,10 @@
    
                    <!-- Footer -->
                    <div class="row items-center justify-between q-px-sm q-py-xs">
-                     <span class="text-subtitle2 text-weight-bold text-primary" v-if="props.row.precio_blister">
+                     <span class="text-body2 text-weight-bold text-primary" v-if="props.row.precio_blister">
                        B ( S/. {{ props.row.precio_blister }} )
                      </span>
-                     <span class="text-subtitle2 text-weight-bold text-primary" v-if="props.row.precio_unidad">
+                     <span class="text-body2 text-weight-bold text-primary" v-if="props.row.precio_unidad">
                       U ( S/. {{ props.row.precio_unidad }} )
                      </span>
                      <div class="row q-gutter-xs">
@@ -362,6 +373,7 @@ const filter            = ref("");
 const loading           = ref(false);
 const carritoOpen       = ref(false);
 const filtrosMobileOpen = ref(false);
+const sidebarOpen       = ref(true);
 const carrito           = ref([]);
 const filtros           = ref({ laboratorio: null, categoria: null, subcategoria: null, area: null, flag_blister: false });
 const pagination        = ref({
@@ -530,11 +542,13 @@ function vaciarCarrito() {
   width: 250px;
   flex-shrink: 0;
   border-right: 1px solid #f0f0f0;
-  position: sticky;
-  top: 0;
-  height: calc(100vh - 64px);
+  height: calc(100vh - 50px);
   overflow-y: auto;
   scrollbar-width: thin;
+  align-self: flex-start;
+  position: sticky;
+  top: 50px;
+  z-index: 0;
 }
 .venta-sidebar::-webkit-scrollbar { width: 4px; }
 .venta-sidebar::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 4px; }
@@ -554,6 +568,8 @@ function vaciarCarrito() {
   overflow: hidden;
   box-shadow: 0 1px 3px rgba(0,0,0,0.07);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+  margin-right: 4px;
+  margin-bottom: 4px;
 }
 .inv-card:hover {
   box-shadow: 0 6px 20px rgba(0,0,0,0.12);
