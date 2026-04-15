@@ -20,11 +20,21 @@ class InventarioController extends Controller
      */
     public function index(Request $request)
     {
+        $query = Inventario::query();
+
+        if ($request->filled('categoria_id')) {
+            $query->whereHas('categorias', fn ($q) => $q->where('categorias.id', $request->categoria_id));
+        }
+
+        if ($request->filled('subcategoria_id')) {
+            $query->whereHas('subcategorias', fn ($q) => $q->where('subcategorias.id', $request->subcategoria_id));
+        }
+
         return $this->generateViewSetList(
             $request,
-            Inventario::query(),
-            [],
-            ['id','nombre','codigo'],
+            $query,
+            ['laboratorio_id', 'area_id', 'flag_blister'],
+            ['id', 'nombre', 'codigo'],
             ['id']
         );
     }
@@ -112,5 +122,31 @@ class InventarioController extends Controller
     {
         $inventario->delete();
         return response()->json(null, 204);
+    }
+
+    public function relacionados(Inventario $inventario)
+    {
+        $categoriaIds    = $inventario->categorias()->pluck('categorias.id');
+        $subcategoriaIds = $inventario->subcategorias()->pluck('subcategorias.id');
+
+        if ($categoriaIds->isEmpty() && $subcategoriaIds->isEmpty()) {
+            return response()->json([]);
+        }
+
+        $relacionados = Inventario::where('id', '!=', $inventario->id)
+            ->where(function ($q) use ($categoriaIds, $subcategoriaIds) {
+                if ($categoriaIds->isNotEmpty()) {
+                    $q->whereHas('categorias', fn ($inner) => $inner->whereIn('categorias.id', $categoriaIds));
+                }
+                if ($subcategoriaIds->isNotEmpty()) {
+                    $method = $categoriaIds->isNotEmpty() ? 'orWhereHas' : 'whereHas';
+                    $q->$method('subcategorias', fn ($inner) => $inner->whereIn('subcategorias.id', $subcategoriaIds));
+                }
+            })
+            ->with(['presentacion', 'archivos'])
+            ->limit(8)
+            ->get();
+
+        return response()->json($relacionados);
     }
 }

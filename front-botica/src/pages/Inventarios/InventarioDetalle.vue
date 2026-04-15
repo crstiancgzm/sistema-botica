@@ -258,6 +258,43 @@
           </q-card-section>
         </q-card>
 
+        <!-- ── PRODUCTOS RELACIONADOS ─────────────────── -->
+        <!-- <div v-if="relacionados.length" class="q-mt-md">
+          <div class="section-title q-mb-sm">Productos relacionados</div>
+          <div class="relacionados-scroll">
+            <div
+              v-for="rel in relacionados"
+              :key="rel.id"
+              class="rel-card cursor-pointer"
+              @click="verRelacionado(rel.id)"
+            >
+              <div class="rel-img-wrap">
+                <q-img
+                  v-if="rel.archivos?.[0]?.url"
+                  :src="`${API_URL}/storage/${rel.archivos[0].url}`"
+                  :ratio="1"
+                  fit="cover"
+                  class="rel-img"
+                >
+                  <template v-slot:error>
+                    <div class="rel-img-placeholder">
+                      <q-icon name="mdi-pill" size="28px" color="primary" />
+                    </div>
+                  </template>
+                </q-img>
+                <div v-else class="rel-img-placeholder">
+                  <q-icon name="mdi-pill" size="28px" color="primary" />
+                </div>
+              </div>
+              <div class="rel-body">
+                <div class="rel-nombre">{{ rel.nombre }}</div>
+                <div class="rel-precio">S/. {{ rel.precio_oficial }}</div>
+                <div class="text-caption text-grey-5">{{ rel.presentacion?.nombre ?? '' }}</div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+
         <!-- Acciones -->
         <div class="row justify-end q-gutter-sm q-mt-lg">
           <q-btn flat label="Cerrar" color="grey-7" v-close-popup />
@@ -325,7 +362,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import InventarioService from 'src/services/InventarioService'
 
@@ -337,20 +374,34 @@ const emit = defineEmits(['editar'])
 const $q      = useQuasar()
 const API_URL = process.env.API_BACKEND_URL
 
-const inv        = ref(null)
-const loading    = ref(true)
-const lightbox   = ref(false)
-const fotoActual = ref(0)
+const inv         = ref(null)
+const loading     = ref(true)
+const lightbox    = ref(false)
+const fotoActual  = ref(0)
+const relacionados = ref([])
+const currentId   = ref(props.inventarioId)
 
-onMounted(async () => {
+async function cargar(id) {
+  loading.value    = true
+  relacionados.value = []
+  inv.value        = null
   try {
-    inv.value = await InventarioService.get(props.inventarioId)
+    inv.value = await InventarioService.get(id)
+    relacionados.value = await InventarioService.getRelacionados(id)
   } catch {
     $q.notify({ type: 'negative', message: 'No se pudo cargar el producto.', position: 'top' })
   } finally {
     loading.value = false
   }
-})
+}
+
+function verRelacionado(id) {
+  currentId.value = id
+}
+
+watch(currentId, (id) => cargar(id))
+
+onMounted(() => cargar(currentId.value))
 
 const firstImage = computed(() => {
   const a = inv.value?.archivos?.[0]
@@ -453,6 +504,69 @@ function abrirFoto(i) {
   font-weight: 500
   text-align: right
   max-width: 60%
+
+// Productos relacionados
+.relacionados-scroll
+  display: flex
+  gap: 12px
+  overflow-x: auto
+  padding-bottom: 8px
+  scrollbar-width: thin
+  &::-webkit-scrollbar
+    height: 4px
+  &::-webkit-scrollbar-thumb
+    background: #e0e0e0
+    border-radius: 4px
+
+.rel-card
+  flex-shrink: 0
+  width: 140px
+  border-radius: 10px
+  border: 1px solid #f0f0f0
+  background: #fff
+  overflow: hidden
+  transition: box-shadow 0.2s, transform 0.2s
+  &:hover
+    box-shadow: 0 4px 14px rgba(0,0,0,0.10)
+    transform: translateY(-2px)
+
+.rel-img-wrap
+  background: #f7f7f7
+  height: 100px
+  position: relative
+  display: flex
+  align-items: center
+  justify-content: center
+
+.rel-img
+  width: 100%
+  height: 100px
+
+.rel-img-placeholder
+  width: 100%
+  height: 100%
+  display: flex
+  align-items: center
+  justify-content: center
+  background: linear-gradient(135deg, #fce4ec, #fdf2f5)
+
+.rel-body
+  padding: 8px 8px 10px
+
+.rel-nombre
+  font-size: 11px
+  font-weight: 600
+  line-height: 1.3
+  display: -webkit-box
+  -webkit-line-clamp: 2
+  -webkit-box-orient: vertical
+  overflow: hidden
+  margin-bottom: 4px
+
+.rel-precio
+  font-size: 13px
+  font-weight: 700
+  color: $primary
 
 // Galería
 .foto-thumb

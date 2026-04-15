@@ -28,6 +28,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     ]);
 });
 
+Route::get('inventarios/{inventario}/relacionados', [InventarioController::class, 'relacionados']);
 Route::apiResource('inventarios', InventarioController::class)->middleware([HandlePrecognitiveRequests::class]);
 Route::apiResource('areas', AreaController::class)->middleware([HandlePrecognitiveRequests::class]);
 Route::apiResource('categorias', CategoriaController::class)->middleware([HandlePrecognitiveRequests::class]);

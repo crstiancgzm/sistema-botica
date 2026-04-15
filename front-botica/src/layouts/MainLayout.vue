@@ -2,7 +2,7 @@
   <q-layout view="hHh lpR fFf" :style="$q.dark.isActive ? 'background: #121212' : 'background: #f0f0f0'">
     <q-header :elevated="$q.dark.isActive ? false : true" :style="$q.dark.isActive ? 'background: #1d1d1d' : 'background: #ff84b0;'" height-hint="64">
       <q-toolbar class="GNL__toolbar">
-        <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" aria-label="Menu" icon="menu" class="q-mr-sm" />
+        <q-btn flat dense round @click="layoutStore.toggleDrawer()" aria-label="Menu" icon="menu" class="q-mr-sm" />
 
         <q-toolbar-title v-if="$q.screen.gt.xs" shrink class="row items-center no-wrap">
           <!-- <img src="https://cdn.quasar.dev/img/layout-gallery/logo-google.svg"> -->
@@ -95,7 +95,7 @@
     </q-header>
 
     <q-drawer
-      v-model="leftDrawerOpen"
+      v-model="layoutStore.drawerOpen"
       show-if-above
       bordered
       :class="$q.dark.isActive ? 'text-white' : 'bg-white text-grey-8'" 
@@ -179,9 +179,11 @@
 import { ref } from 'vue'
 import menuList from 'src/layouts/MenuList.js'
 import SwitchDarkMode from 'src/components/SwitchDarkMode.vue'
-import NavUser from 'src/components/NavUser.vue';
-const leftDrawerOpen = ref(false);
-import { useRoute } from "vue-router";
+import NavUser from 'src/components/NavUser.vue'
+import { useLayoutStore } from 'src/stores/layout-store'
+import { useRoute } from "vue-router"
+
+const layoutStore = useLayoutStore()
 
 const route = useRoute();
 const enlace = ref(route.name);

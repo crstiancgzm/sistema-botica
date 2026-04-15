@@ -68,10 +68,15 @@ const routes = [
         name: 'Proveedores',
         component: () => import('pages/Proveedores/ProveedoresList.vue') 
       },
-      { 
-        path: 'presentaciones', 
+      {
+        path: 'presentaciones',
         name: 'Presentaciones',
-        component: () => import('pages/Presentaciones/PresentacionesList.vue') 
+        component: () => import('pages/Presentaciones/PresentacionesList.vue')
+      },
+      {
+        path: 'venta',
+        name: 'Venta',
+        component: () => import('pages/Ventas/VentasList.vue')
       },
       // {
       //   path: 'alquiler/:id',

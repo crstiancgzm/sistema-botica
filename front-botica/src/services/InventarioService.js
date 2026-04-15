@@ -20,6 +20,10 @@ class InventarioService {
             return (await api.put(`api/inventarios/${reg.id}`, reg)).data;
         }
     }
+
+    static async getRelacionados(id) {
+        return (await api.get(`/api/inventarios/${id}/relacionados`)).data;
+    }
 }
 
 export default InventarioService;

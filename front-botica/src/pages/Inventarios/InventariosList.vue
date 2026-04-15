@@ -31,7 +31,78 @@
       <div class="text-caption text-grey-6" v-if="!loading">
         {{ pagination.rowsNumber }} resultado{{ pagination.rowsNumber !== 1 ? 's' : '' }}
       </div>
+      <q-btn flat round dense icon="bi-funnel" :color="filtrosActivos > 0 ? 'primary' : 'grey-6'"
+        @click="showFiltros = !showFiltros">
+        <q-badge v-if="filtrosActivos > 0" color="primary" floating>{{ filtrosActivos }}</q-badge>
+        <q-tooltip>{{ showFiltros ? 'Ocultar filtros' : 'Filtros' }}</q-tooltip>
+      </q-btn>
     </div>
+
+    <!-- Panel de filtros -->
+    <transition name="slide-down">
+      <q-card v-if="showFiltros" bordered flat class="q-ma-sm q-pt-md q-pl-md">
+        <div class="row q-col-gutter-sm items-end">
+          <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <SelectGeneralAsyncrono
+              v-model="filtros.laboratorio"
+              label="Laboratorio"
+              prepend-icon="science"
+              :service-api="LaboratorioService"
+              :add="false"
+              @option-selected="aplicarFiltros"
+              @clear="aplicarFiltros"
+            />
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <SelectGeneralAsyncrono
+              v-model="filtros.categoria"
+              label="Categoría"
+              prepend-icon="bi-tag"
+              :service-api="CategoriaService"
+              :add="false"
+              @option-selected="aplicarFiltros"
+              @clear="aplicarFiltros"
+            />
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+            <SelectGeneralAsyncrono
+              v-model="filtros.subcategoria"
+              label="Malestar"
+              prepend-icon="mdi-emoticon-sick-outline"
+              :service-api="CategoriaMalestarService"
+              :add="false"
+              @option-selected="aplicarFiltros"
+              @clear="aplicarFiltros"
+            />
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2 ">
+            <SelectGeneralAsyncrono
+              v-model="filtros.area"
+              label="Área"
+              prepend-icon="bi-building"
+              :service-api="AreaService"
+              :add="false"
+              @option-selected="aplicarFiltros"
+              @clear="aplicarFiltros"
+            />
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2 q-mb-lg">
+            <q-toggle
+              v-model="filtros.flag_blister"
+              label="SOLO BLISTER"
+              color="primary"
+              checked-icon="check"
+              @update:model-value="aplicarFiltros"
+            />
+          </div>
+          <div class="col-xs-12 col-sm-6 col-md-3 col-lg-2 flex items-end q-mb-lg">
+            <q-btn size="md" flat outline color="primary" icon="bi-stars" label="Limpiar"
+              :disable="filtrosActivos === 0"
+              @click="limpiarFiltros" />
+          </div>
+        </div>
+      </q-card>
+    </transition>
 
     <!-- Grid -->
     <q-table
@@ -172,11 +243,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import InventarioService from "src/services/InventarioService";
+import LaboratorioService from "src/services/LaboratorioService";
+import CategoriaService from "src/services/CategoriaService";
+import CategoriaMalestarService from "src/services/CategoriaMalestarService";
+import AreaService from "src/services/AreaService";
 import { useQuasar } from "quasar";
 import InventariosForm from "src/pages/Inventarios/InventariosForm.vue";
 import InventarioDetalle from "src/pages/Inventarios/InventarioDetalle.vue";
+import SelectGeneralAsyncrono from "src/components/selectGeneralAsyncrono.vue";
 
 const $q      = useQuasar();
 const API_URL = process.env.API_BACKEND_URL;
@@ -200,9 +276,29 @@ const editId             = ref();
 const rows               = ref([]);
 const filter             = ref("");
 const loading            = ref(false);
+const showFiltros        = ref(false);
+const filtros            = ref({ laboratorio: null, categoria: null, subcategoria: null, area: null, flag_blister: false });
 const pagination         = ref({
   sortBy: "id", descending: true, page: 1, rowsPerPage: 12, rowsNumber: 0,
 });
+
+const filtrosActivos = computed(() => [
+  filtros.value.laboratorio,
+  filtros.value.categoria,
+  filtros.value.subcategoria,
+  filtros.value.area,
+  filtros.value.flag_blister || null,
+].filter(Boolean).length);
+
+function aplicarFiltros() {
+  pagination.value.page = 1;
+  tableRef.value.requestServerInteraction();
+}
+
+function limpiarFiltros() {
+  filtros.value = { laboratorio: null, categoria: null, subcategoria: null, area: null, flag_blister: false };
+  aplicarFiltros();
+}
 
 function firstImage(row) {
   const archivo = row.archivos?.[0];
@@ -233,9 +329,17 @@ async function onRequest(props) {
   const { page, rowsPerPage, sortBy, descending } = props.pagination;
   loading.value = true;
   const order_by = descending ? "-" + sortBy : sortBy;
-  const { data, total = 0 } = await InventarioService.getData({
-    params: { rowsPerPage: rowsPerPage || 0, page, search: props.filter, order_by },
-  });
+
+  const params = {
+    rowsPerPage: rowsPerPage || 0, page, search: props.filter, order_by,
+    ...(filtros.value.laboratorio?.id  && { laboratorio_id:  filtros.value.laboratorio.id }),
+    ...(filtros.value.categoria?.id    && { categoria_id:    filtros.value.categoria.id }),
+    ...(filtros.value.subcategoria?.id && { subcategoria_id: filtros.value.subcategoria.id }),
+    ...(filtros.value.area?.id         && { area_id:         filtros.value.area.id }),
+    ...(filtros.value.flag_blister     && { flag_blister: 1 }),
+  };
+
+  const { data, total = 0 } = await InventarioService.getData({ params });
   rows.value.splice(0, rows.value.length, ...data);
   pagination.value = { ...pagination.value, rowsNumber: total || data.length, page, rowsPerPage, sortBy, descending };
   loading.value = false;
@@ -352,6 +456,25 @@ async function eliminar(id) {
   font-size: 10px !important;
   padding: 10px !important;
   margin: 4px;
+}
+
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+.slide-down-enter-from,
+.slide-down-leave-to {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.slide-down-enter-to,
+.slide-down-leave-from {
+  max-height: 200px;
+  opacity: 1;
 }
 
 /* Texto truncado en 1 línea */
