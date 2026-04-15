@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AreaController;
+use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\LaboratorioController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\RolController;
 use App\Http\Controllers\SubcategoriaController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VentaController;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -42,3 +44,14 @@ Route::apiResource('presentaciones', PresentacionController::class)->middleware(
 Route::apiResource('roles', RolController::class)->middleware([HandlePrecognitiveRequests::class]);
 Route::apiResource('permisos', PermisoController::class)->middleware([HandlePrecognitiveRequests::class]);
 Route::apiResource('usuarios', UserController::class)->middleware([HandlePrecognitiveRequests::class]);
+
+// Caja
+Route::prefix('caja')->group(function () {
+    Route::get('estado', [CajaController::class, 'estado']);
+    Route::get('hoy',    [CajaController::class, 'hoy']);
+    Route::post('abrir', [CajaController::class, 'abrir']);
+    Route::put('{caja}/cerrar', [CajaController::class, 'cerrar']);
+});
+
+// Ventas
+Route::post('ventas', [VentaController::class, 'store']);

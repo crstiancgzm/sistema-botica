@@ -56,6 +56,8 @@
           <q-item-section>
             <q-toggle v-model="filtros.flag_blister" label="Solo con blister"
               color="primary" @update:model-value="aplicarFiltros" />
+            <q-toggle v-model="filtros.flag_disponible" label="Solo disponibles"
+              color="primary" @update:model-value="aplicarFiltros" />
           </q-item-section>
         </q-item>
 
@@ -301,7 +303,7 @@
             <span class="text-h6 text-weight-bold text-primary">S/. {{ total }}</span>
           </div>
           <q-btn unelevated color="primary" icon="bi-receipt" label="Procesar venta"
-            class="full-width" :disable="carrito.length === 0" />
+            class="full-width" :disable="carrito.length === 0" @click="procesarVenta" />
           <q-btn flat color="negative" label="Vaciar carrito"
             class="full-width q-mt-xs" :disable="carrito.length === 0"
             @click="vaciarCarrito" />
@@ -352,6 +354,7 @@ import { useQuasar } from "quasar";
 import { useLayoutStore } from "src/stores/layout-store";
 import InventarioDetalle from "src/pages/Inventarios/InventarioDetalle.vue";
 import SelectGeneralAsyncrono from "src/components/selectGeneralAsyncrono.vue";
+import ProcesarVentaDialog from "src/pages/Ventas/ProcesarVentaDialog.vue";
 
 const $q          = useQuasar();
 const API_URL     = process.env.API_BACKEND_URL;
@@ -375,7 +378,7 @@ const carritoOpen       = ref(false);
 const filtrosMobileOpen = ref(false);
 const sidebarOpen       = ref(true);
 const carrito           = ref([]);
-const filtros           = ref({ laboratorio: null, categoria: null, subcategoria: null, area: null, flag_blister: false });
+const filtros           = ref({ laboratorio: null, categoria: null, subcategoria: null, area: null, flag_blister: false, flag_disponible: true });
 const pagination        = ref({
   sortBy: "id", descending: true, page: 1, rowsPerPage: 12, rowsNumber: 0,
 });
@@ -393,6 +396,7 @@ const filtrosActivos = computed(() => [
   filtros.value.subcategoria,
   filtros.value.area,
   filtros.value.flag_blister || null,
+  filtros.value.flag_disponible || null,
 ].filter(Boolean).length);
 
 function aplicarFiltros() {
@@ -401,7 +405,7 @@ function aplicarFiltros() {
 }
 
 function limpiarFiltros() {
-  filtros.value = { laboratorio: null, categoria: null, subcategoria: null, area: null, flag_blister: false };
+  filtros.value = { laboratorio: null, categoria: null, subcategoria: null, area: null, flag_blister: false, flag_disponible: true };
   aplicarFiltros();
 }
 
@@ -427,11 +431,13 @@ async function onRequest(props) {
   const order_by = descending ? "-" + sortBy : sortBy;
   const params = {
     rowsPerPage: rowsPerPage || 0, page, search: props.filter, order_by,
+    flag_disponible: filtros.value.flag_disponible,
     ...(filtros.value.laboratorio?.id  && { laboratorio_id:  filtros.value.laboratorio.id }),
     ...(filtros.value.categoria?.id    && { categoria_id:    filtros.value.categoria.id }),
     ...(filtros.value.subcategoria?.id && { subcategoria_id: filtros.value.subcategoria.id }),
     ...(filtros.value.area?.id         && { area_id:         filtros.value.area.id }),
     ...(filtros.value.flag_blister     && { flag_blister: 1 }),
+    ...(filtros.value.flag_disponible     && { flag_disponible: 1 }),
   };
   const { data, total = 0 } = await InventarioService.getData({ params });
   rows.value.splice(0, rows.value.length, ...data);
@@ -531,6 +537,20 @@ function vaciarCarrito() {
     message: 'Se eliminarán todos los productos.',
     cancel: true, persistent: true,
   }).onOk(() => { carrito.value = []; });
+}
+
+function procesarVenta() {
+  $q.dialog({
+    component: ProcesarVentaDialog,
+    componentProps: {
+      carrito: carrito.value,
+      total:   total.value,
+    },
+  }).onOk(() => {
+    carrito.value  = [];
+    carritoOpen.value = false;
+    tableRef.value.requestServerInteraction();
+  });
 }
 </script>
 

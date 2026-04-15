@@ -32,6 +32,7 @@ class Inventario extends Model
         'laboratorio_id',
         'presentacion_id',
         'area_id',
+        'flag_disponible',
     ];
 
     public function proveedor()

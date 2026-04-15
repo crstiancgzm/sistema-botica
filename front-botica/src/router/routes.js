@@ -78,6 +78,11 @@ const routes = [
         name: 'Venta',
         component: () => import('pages/Ventas/VentasList.vue')
       },
+      {
+        path: 'caja',
+        name: 'Caja',
+        component: () => import('pages/Caja/CajaPage.vue')
+      },
       // {
       //   path: 'alquiler/:id',
       //   name: 'grupo-alquiler',

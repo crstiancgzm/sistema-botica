@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Inventario;
 use App\Http\Requests\StoreInventarioRequest;
 use App\Http\Requests\UpdateInventarioRequest;
-use Symfony\Component\HttpFoundation\Request;
+use Illuminate\Http\Request;
 use App\Services\ArchivosService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -33,7 +33,7 @@ class InventarioController extends Controller
         return $this->generateViewSetList(
             $request,
             $query,
-            ['laboratorio_id', 'area_id', 'flag_blister'],
+            ['laboratorio_id', 'area_id', 'flag_blister', 'flag_disponible'],
             ['id', 'nombre', 'codigo'],
             ['id']
         );
