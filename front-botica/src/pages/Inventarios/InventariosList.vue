@@ -18,6 +18,11 @@
       <q-btn  color="primary" icon-right="add"
         :label="$q.screen.lt.sm ? '' : 'Agregar producto'" :disable="loading"
         @click="{ formInventarios = true; edit = false; title = 'REGISTRAR PRODUCTO'; editId = null; }" />
+      <q-btn color="secondary" icon="bi-upc-scan"
+        :label="$q.screen.lt.sm ? '' : 'Códigos de barras'" :disable="loading"
+        @click="abrirGeneradorBarcodes">
+        <q-tooltip>Generar etiquetas con código de barras</q-tooltip>
+      </q-btn>
       <q-input
         class="col"
         standout="bg-primary text-white" dense debounce="500"
@@ -252,6 +257,7 @@ import AreaService from "src/services/AreaService";
 import { useQuasar } from "quasar";
 import InventariosForm from "src/pages/Inventarios/InventariosForm.vue";
 import InventarioDetalle from "src/pages/Inventarios/InventarioDetalle.vue";
+import GeneradorBarcodesDialog from "src/pages/Inventarios/GeneradorBarcodesDialog.vue";
 import SelectGeneralAsyncrono from "src/components/selectGeneralAsyncrono.vue";
 
 const $q      = useQuasar();
@@ -365,6 +371,10 @@ async function editar(id) {
   editId.value = id;
   const row = await InventarioService.get(id);
   inventariosformRef.value.form.setData({ inventario: { archivos: [], ...row } });
+}
+
+function abrirGeneradorBarcodes() {
+  $q.dialog({ component: GeneradorBarcodesDialog });
 }
 
 async function eliminar(id) {

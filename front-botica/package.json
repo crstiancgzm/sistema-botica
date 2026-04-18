@@ -21,6 +21,8 @@
     "axios": "^1.2.1",
     "compressorjs": "^1.2.1",
     "encrypt-storage": "^2.14.7",
+    "jsbarcode": "^3.12.3",
+    "jspdf": "^4.2.1",
     "laravel-precognition-vue": "^1.0.2",
     "pinia": "^3.0.1",
     "quasar": "^2.16.0",
