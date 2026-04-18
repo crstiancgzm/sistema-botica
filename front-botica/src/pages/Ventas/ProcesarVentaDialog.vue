@@ -130,6 +130,13 @@ const formValido = computed(() => {
   return true;
 });
 
+function base64ToBlob(b64, mime) {
+  const bytes = atob(b64);
+  const arr   = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  return new Blob([arr], { type: mime });
+}
+
 async function confirmar() {
   loading.value = true;
   try {
@@ -145,8 +152,16 @@ async function confirmar() {
         precio_venta:  i.precio_venta,
       })),
     };
-    await VentaService.registrar(payload);
+    const res = await VentaService.registrar(payload);
     $q.notify({ type: 'positive', message: 'Venta registrada correctamente.', position: 'top-right' });
+
+    if (res.pdf) {
+      const blob = base64ToBlob(res.pdf, 'application/pdf');
+      const url  = URL.createObjectURL(blob);
+      window.open(url, '_blank');
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    }
+
     onDialogOK();
   } catch (e) {
     $q.notify({ type: 'negative', message: 'Error al registrar la venta.', position: 'top-right' });

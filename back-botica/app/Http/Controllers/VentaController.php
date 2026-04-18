@@ -6,6 +6,7 @@ use App\Http\Requests\StoreVentaRequest;
 use App\Models\Caja;
 use App\Models\Inventario;
 use App\Models\Venta;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 
 class VentaController extends Controller
@@ -88,6 +89,15 @@ class VentaController extends Controller
             return $venta->load('items.inventario:id,nombre,codigo');
         });
 
-        return response()->json($venta, 201);
+        $venta->load(['items.inventario:id,nombre', 'usuario:id,name', 'caja:id,turno']);
+
+        $pdf = Pdf::loadView('boleta', compact('venta'))
+            ->setOptions(['isRemoteEnabled' => true])
+            ->setPaper([0, 0, 226.77, 700], 'portrait'); // 80mm de ancho
+
+        return response()->json([
+            'venta' => $venta,
+            'pdf'   => base64_encode($pdf->output()),
+        ], 201);
     }
 }
