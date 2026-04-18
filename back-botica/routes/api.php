@@ -47,9 +47,11 @@ Route::apiResource('usuarios', UserController::class)->middleware([HandlePrecogn
 
 // Caja
 Route::prefix('caja')->group(function () {
-    Route::get('estado', [CajaController::class, 'estado']);
-    Route::get('hoy',    [CajaController::class, 'hoy']);
-    Route::post('abrir', [CajaController::class, 'abrir']);
+    Route::get('estado',     [CajaController::class, 'estado']);
+    Route::get('hoy',        [CajaController::class, 'hoy']);
+    Route::get('historial',  [CajaController::class, 'index']);
+    Route::post('abrir',     [CajaController::class, 'abrir']);
+    Route::get('{caja}',     [CajaController::class, 'show']);
     Route::put('{caja}/cerrar', [CajaController::class, 'cerrar']);
 });
 

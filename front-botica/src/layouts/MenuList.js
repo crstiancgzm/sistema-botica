@@ -25,6 +25,7 @@ const links4 = [
     // { icon: 'bi-people-fill', text: 'Clientes' },
     { icon: 'bi-shop', text: 'Venta' },
     { icon: 'bi-bank', text: 'Caja' },
+    { icon: 'bi-bank', text: 'Historial' },
 ];
 const links5 = [
     { icon: 'bi-graph-up', text: 'Reportes' },

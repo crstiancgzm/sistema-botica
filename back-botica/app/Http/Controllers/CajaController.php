@@ -7,9 +7,71 @@ use App\Http\Requests\CerrarCajaRequest;
 use App\Models\Caja;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CajaController extends Controller
 {
+    /**
+     * Historial paginado de cajas con filtros opcionales.
+     */
+    public function index(Request $request)
+    {
+        $query = Caja::with(['usuarioApertura:id,name', 'usuarioCierre:id,name'])
+            ->withCount('ventas')
+            ->withSum('ventas', 'total');
+
+        if ($request->filled('fecha_desde')) {
+            $query->whereDate('fecha', '>=', $request->fecha_desde);
+        }
+        if ($request->filled('fecha_hasta')) {
+            $query->whereDate('fecha', '<=', $request->fecha_hasta);
+        }
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
+        }
+        if ($request->filled('turno')) {
+            $query->where('turno', $request->turno);
+        }
+
+        $orderBy = $request->input('order_by', '-fecha');
+        $desc    = str_starts_with($orderBy, '-');
+        $col     = ltrim($orderBy, '-');
+        $allowedCols = ['fecha', 'hora_apertura', 'turno', 'estado', 'monto_inicial', 'monto_final', 'id'];
+        $query->orderBy(in_array($col, $allowedCols) ? $col : 'fecha', $desc ? 'desc' : 'asc');
+
+        $perPage = (int) $request->input('rowsPerPage', 15);
+        if ($perPage === 0) {
+            $data = $query->get();
+            return response()->json(['data' => $data, 'total' => $data->count()]);
+        }
+
+        $paginated = $query->paginate($perPage);
+        return response()->json(['data' => $paginated->items(), 'total' => $paginated->total()]);
+    }
+
+    /**
+     * Detalle de una caja: ventas con sus ítems y breakdown por método de pago.
+     */
+    public function show(Caja $caja)
+    {
+        $caja->load([
+            'usuarioApertura:id,name',
+            'usuarioCierre:id,name',
+            'ventas' => fn ($q) => $q
+                ->with(['items.inventario:id,nombre,codigo', 'usuario:id,name'])
+                ->orderBy('created_at', 'desc'),
+        ]);
+        $caja->loadCount('ventas');
+        $caja->loadSum('ventas', 'total');
+
+        $breakdown = $caja->ventas()
+            ->selectRaw('metodo_pago, COUNT(*) as cantidad, SUM(total) as total')
+            ->groupBy('metodo_pago')
+            ->get();
+
+        return response()->json(['caja' => $caja, 'breakdown' => $breakdown]);
+    }
+
     /**
      * Devuelve la caja actualmente abierta (o null si no hay ninguna).
      */
