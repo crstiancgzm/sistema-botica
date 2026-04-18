@@ -45,21 +45,22 @@ export default defineBoot(({ app, router, store }) => {
           message: 'Tu sesión ha expirado. Por favor vuelve a iniciar sesión.',
           position: 'top',
           progress: true,
-          icon: 'ion-close-circle',
           timeout: 4000,
         })
-        console.log('sesion expirado')
-        // useUserStore(store).logout()
-        // logout()
-        // store.user.logout()
         userStore.logout()
         router.push({ name: 'Login' })
+      }
 
-        // aquí limpias el token y rediriges al login
-        // Notify.create({
-        //   type: 'negative',
-        //   message: 'Tu sesión ha expirado. Por favor vuelve a iniciar sesión.',
-        // })
+      if (error.response && error.response.status === 403) {
+        Notify.create({
+          type: 'warning',
+          message: 'Tu cuenta ha sido desactivada. Contacta al administrador.',
+          position: 'top',
+          progress: true,
+          timeout: 5000,
+        })
+        userStore.logout()
+        router.push({ name: 'Login' })
       }
       return Promise.reject(error)
     },

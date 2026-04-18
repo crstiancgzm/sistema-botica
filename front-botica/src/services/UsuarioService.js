@@ -33,6 +33,10 @@ class UsuarioService {
     return (await api.delete(`api/usuarios/${id}`)).data;
   }
 
+  static async toggleActive(id) {
+    return (await api.patch(`api/usuarios/${id}/toggle-active`)).data;
+  }
+
 }
 
 export default UsuarioService;

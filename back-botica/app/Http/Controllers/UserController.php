@@ -79,6 +79,20 @@ class UserController extends Controller
         return response()->json($usuario->delete());
     }
 
+    public function toggleActive(User $usuario)
+    {
+        $usuario->update(['active' => !$usuario->active]);
+
+        if (!$usuario->active) {
+            $usuario->tokens()->delete();
+        }
+
+        return response()->json([
+            'id'     => $usuario->id,
+            'active' => $usuario->active,
+        ]);
+    }
+
     // public function usuario_password(StoreUpdatePasswordRequest $request, $id)
     // {
     //     $usuario = User::find($id);

@@ -90,7 +90,16 @@
       <template v-slot:body="props">
         <q-tr :props="props">
           <q-td v-for="col in props.cols" :key="col.name" :props="props">
-            {{ col.value }}
+            <template v-if="col.name === 'active'">
+              <q-badge
+                :color="props.row.active ? 'positive' : 'negative'"
+                :label="props.row.active ? 'Activo' : 'Inactivo'"
+                class="q-pa-xs"
+              />
+            </template>
+            <template v-else>
+              {{ col.value }}
+            </template>
           </q-td>
           <q-td auto-width>
             <q-btn
@@ -102,6 +111,17 @@
               icon="edit"
               class="q-mr-xs"
             />
+            <q-btn
+              size="sm"
+              :outline="props.row.active"
+              :color="props.row.active ? 'orange' : 'grey'"
+              round
+              @click="toggleActive(props.row)"
+              :icon="props.row.active ? 'person_off' : 'person'"
+              class="q-mr-xs"
+            >
+              <q-tooltip>{{ props.row.active ? 'Dar de baja' : 'Activar' }}</q-tooltip>
+            </q-btn>
             <q-btn
               size="sm"
               outline
@@ -152,6 +172,13 @@ const columns = [
     aling: "center",
     field: (row) => row.area?.nombre ? row.area?.nombre : 'S/S',
     sortable: true,
+  },
+  {
+    name: "active",
+    label: "ESTADO",
+    align: "center",
+    field: (row) => row.active,
+    sortable: false,
   },
 ];
 
@@ -232,6 +259,26 @@ async function editar(id) {
 
   // permisosformRef.value.setValue(row);
   // usuariosformRef.value.setData(row);
+}
+
+async function toggleActive(row) {
+  const accion = row.active ? 'dar de baja' : 'activar';
+  $q.dialog({
+    title: `¿${row.active ? 'Dar de baja' : 'Activar'} usuario?`,
+    message: `¿Estás seguro de ${accion} a <b>${row.name}</b>?`,
+    html: true,
+    cancel: true,
+    persistent: true,
+  }).onOk(async () => {
+    const result = await UsuarioService.toggleActive(row.id);
+    row.active = result.active;
+    $q.notify({
+      type: result.active ? 'positive' : 'warning',
+      message: result.active ? 'Usuario activado.' : 'Usuario dado de baja.',
+      position: 'top-right',
+      timeout: 1500,
+    });
+  });
 }
 
 async function eliminar(id) {
