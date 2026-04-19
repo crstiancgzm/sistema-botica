@@ -250,7 +250,7 @@
             </q-tr>
 
             <!-- Items expandidos -->
-            <q-tr v-if="expandidos.includes(props.row.id)" :props="props" class="bg-blue-1">
+            <q-tr v-if="expandidos.includes(props.row.id)" :props="props" class="bg-blue">
               <q-td colspan="100%" class="q-pa-sm">
                 <q-table
                   flat dense
@@ -259,7 +259,7 @@
                   row-key="id"
                   hide-pagination
                   :rows-per-page-options="[0]"
-                  class="bg-blue-1"
+                  class="bg-blue text-white"
                 >
                   <template v-slot:body-cell-subtotal="itemProps">
                     <q-td :props="itemProps">
