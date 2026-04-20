@@ -55,13 +55,13 @@
         <q-item dense class="q-px-none q-mt-xs">
           <q-item-section>
             <q-toggle v-model="filtros.flag_blister" label="Solo con blister"
-              color="primary" @update:model-value="aplicarFiltros" />
+              color="cyan" @update:model-value="aplicarFiltros" />
             <q-toggle v-model="filtros.flag_disponible" label="Solo disponibles"
-              color="primary" @update:model-value="aplicarFiltros" />
+              color="cyan" @update:model-value="aplicarFiltros" />
           </q-item-section>
         </q-item>
 
-        <q-btn v-if="filtrosActivos > 0" flat dense color="primary" icon="bi-stars"
+        <q-btn v-if="filtrosActivos > 0" flat dense color="cyan" icon="bi-stars"
           label="Limpiar filtros" class="full-width q-pa-sm" @click="limpiarFiltros" />
       </div>
 
@@ -74,24 +74,24 @@
           <!-- Toggle sidebar (desktop) -->
           <q-btn v-if="$q.screen.gt.sm" flat round dense
             :icon="sidebarOpen ? 'bi-layout-sidebar' : 'bi-layout-sidebar-reverse'"
-            :color="filtrosActivos > 0 && !sidebarOpen ? 'primary' : ''"
+            :color="filtrosActivos > 0 && !sidebarOpen ? 'cyan' : ''"
             @click="sidebarOpen = !sidebarOpen">
-            <q-badge v-if="filtrosActivos > 0 && !sidebarOpen" color="primary" floating>{{ filtrosActivos }}</q-badge>
+            <q-badge v-if="filtrosActivos > 0 && !sidebarOpen" color="cyan" floating>{{ filtrosActivos }}</q-badge>
             <q-tooltip>{{ sidebarOpen ? 'Ocultar filtros' : 'Mostrar filtros' }}</q-tooltip>
           </q-btn>
 
           <!-- Toggle filtros (mobile) -->
           <q-btn v-if="$q.screen.lt.md" flat round dense icon="bi-funnel"
-            :color="filtrosActivos > 0 ? 'primary' : 'grey-6'"
+            :color="filtrosActivos > 0 ? 'cyan' : 'grey-6'"
             @click="filtrosMobileOpen = true">
-            <q-badge v-if="filtrosActivos > 0" color="primary" floating>{{ filtrosActivos }}</q-badge>
+            <q-badge v-if="filtrosActivos > 0" color="cyan" floating>{{ filtrosActivos }}</q-badge>
           </q-btn>
 
-          <div class="text-h6 text-weight-bold text-primary col-auto">
+          <div class="text-h6 text-weight-bold text-cyan col-auto">
             <q-icon name="bi-shop" class="q-mr-xs" />Punto de Venta
           </div>
 
-          <q-input class="col" standout="bg-primary text-white" dense debounce="500"
+          <q-input class="col" standout="bg-cyan text-white" dense debounce="500"
             v-model="filter" placeholder="Buscar producto...">
             <template v-slot:prepend><q-icon name="search" color="white" /></template>
             <template v-slot:append>
@@ -103,7 +103,7 @@
             {{ pagination.rowsNumber }} producto{{ pagination.rowsNumber !== 1 ? 's' : '' }}
           </div>
 
-          <q-btn round unelevated color="primary" icon="bi-cart3" @click="carritoOpen = true">
+          <q-btn round unelevated icon="bi-cart3" @click="carritoOpen = true">
             <q-badge v-if="totalItems > 0" color="negative" floating>{{ totalItems }}</q-badge>
             <q-tooltip>Ver carrito</q-tooltip>
           </q-btn>
@@ -142,14 +142,14 @@
                        <template v-slot:error>
                          <div class="img-placeholder" style="padding-top:100%">
                            <div class="placeholder-inner">
-                             <q-icon name="mdi-pill" size="32px" color="primary" />
+                             <q-icon name="mdi-pill" size="32px" color="cyan" />
                            </div>
                          </div>
                        </template>
                      </q-img>
                      <div v-else class="img-placeholder" style="padding-top:100%">
                        <div class="placeholder-inner">
-                         <q-icon name="mdi-pill" size="32px" color="primary" />
+                         <q-icon name="mdi-pill" size="32px" color="cyan" />
                        </div>
                      </div>
    
@@ -167,8 +167,8 @@
                      </div>
    
                      <!-- Stock badge -->
-                     <q-badge outline
-                       :color="props.row.cantidad === 0 ? 'grey-6' : stockBajo(props.row) ? 'negative' : 'positive'"
+                     <q-badge text-color="white"
+                       :color="props.row.cantidad === 0 ? 'grey-6' : stockBajo(props.row) ? 'negative' : 'teal'"
                        class="stock-badge">
                        STOCK : {{ props.row.cantidad }}
                      </q-badge>
@@ -205,10 +205,10 @@
    
                    <!-- Footer -->
                    <div class="row items-center justify-between q-px-sm q-py-xs">
-                     <span class="text-body2 text-weight-bold text-primary" v-if="props.row.precio_blister">
+                     <span class="text-body2 text-weight-bold" v-if="props.row.precio_blister">
                        B ( S/. {{ props.row.precio_blister }} )
                      </span>
-                     <span class="text-body2 text-weight-bold text-primary" v-if="props.row.precio_unidad">
+                     <span class="text-body2 text-weight-bold" v-if="props.row.precio_unidad">
                       U ( S/. {{ props.row.precio_unidad }} )
                      </span>
                      <div class="row q-gutter-xs">
@@ -216,7 +216,7 @@
                          @click="verDetalle(props.row.id)">
                          <q-tooltip>Ver detalle</q-tooltip>
                        </q-btn>
-                       <q-btn round unelevated size="sm" color="primary" icon="bi-cart-plus"
+                       <q-btn round unelevated size="sm" color="cyan" icon="bi-cart-plus"
                          :disable="sinStock(props.row) || estaVencido(props.row.fecha_vencimiento)"
                          @click="agregar(props.row)">
                          <q-tooltip>Agregar al carrito</q-tooltip>
@@ -242,7 +242,7 @@
     <!-- ── CARRITO (drawer derecho) ──────────────────── -->
     <q-drawer v-model="carritoOpen" side="right" bordered :width="310" overlay>
       <div class="column full-height">
-        <div class="q-pa-sm row items-center justify-between bg-primary text-white" style="border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
+        <div class="q-pa-sm row items-center justify-between" style="border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
           <div class="text-subtitle1 text-weight-bold">
             <q-icon name="bi-cart3" size="sm" class="q-ml-sm q-mr-sm" />Punto de venta
           </div>
@@ -261,7 +261,7 @@
                 <q-img v-if="firstImage(item)" :src="firstImage(item)"
                   style="width:44px;height:44px;border-radius:8px" fit="cover" />
                 <div v-else class="carrito-img-placeholder">
-                  <q-icon name="mdi-pill" size="20px" color="primary" />
+                  <q-icon name="mdi-pill" size="20px" color="cyan" />
                 </div>
               </q-item-section>
               <q-item-section>
@@ -287,7 +287,7 @@
                 </div>
               </q-item-section>
               <q-item-section side>
-                <div class="text-weight-bold text-primary">
+                <div :class="$q.dark.isActive ? 'text-white' : 'text-dark'" class="text-weight-bold">
                   S/. {{ (item.precio_venta * item.qty).toFixed(2) }}
                 </div>
                 <q-btn flat round dense size="xs" icon="delete" color="negative"
@@ -300,9 +300,9 @@
         <div class="q-pa-md" style="border-top:1px solid #eee">
           <div class="row justify-between q-mb-sm">
             <span class="text-subtitle2 text-grey-7">Total</span>
-            <span class="text-h6 text-weight-bold text-primary">S/. {{ total }}</span>
+            <span class="text-h6 text-weight-bold">S/. {{ total }}</span>
           </div>
-          <q-btn unelevated color="primary" icon="bi-receipt" label="Procesar venta"
+          <q-btn unelevated color="cyan" icon="bi-shop" label="Procesar venta"
             class="full-width" :disable="carrito.length === 0" @click="procesarVenta" />
           <q-btn flat color="negative" label="Vaciar carrito"
             class="full-width q-mt-xs" :disable="carrito.length === 0"
@@ -331,14 +331,14 @@
           prepend-icon="bi-building" :service-api="AreaService" :add="false"
           @option-selected="aplicarFiltros" @clear="aplicarFiltros" class="q-mb-sm" />
         <q-toggle v-model="filtros.flag_blister" label="Solo con blister"
-          color="primary" @update:model-value="aplicarFiltros" />
+          color="cyan" @update:model-value="aplicarFiltros" />
         <q-btn v-if="filtrosActivos > 0" flat dense color="negative" icon="bi-x-circle"
           label="Limpiar filtros" class="full-width q-mt-md" @click="limpiarFiltros" />
       </q-card>
     </q-dialog>
 
     <q-inner-loading :showing="loading">
-      <q-spinner-pie size="200px" color="primary" />
+      <q-spinner-pie size="200px" color="cyan" />
     </q-inner-loading>
   </q-page>
 </template>
