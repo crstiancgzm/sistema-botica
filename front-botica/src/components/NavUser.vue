@@ -28,13 +28,13 @@
               <q-item-label caption>Administrador</q-item-label>
              </q-item-section>
           </q-item>
-          <q-separator inset />
+          <!-- <q-separator inset />
             <q-item :to="{ name: 'Roles' }" :active="link === 'Roles'" @click="link = 'Roles'" clickable v-ripple class="q-ma-xs">
             <q-item-section avatar>
               <q-icon name="mdi-account" size="25px" />
             </q-item-section>
             <q-item-section side> Perfil </q-item-section>
-          </q-item>
+          </q-item> -->
           <!-- <q-separator inset />
            <q-item :to="{ name: 'Roles' }" :active="link === 'Roles'" @click="link = 'Roles'" clickable v-ripple class="q-ma-xs">
             <q-item-section avatar>
