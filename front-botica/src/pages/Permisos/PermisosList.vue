@@ -257,6 +257,4 @@ async function eliminar(id) {
     /* height of all previous header rows */
     scroll-margin-top: 48px
 
-.htable
-  #height: calc(100vh - 157px)
 </style>
