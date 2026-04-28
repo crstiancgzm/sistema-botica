@@ -12,7 +12,7 @@
         @click="sidebarOpen = false; cartOpen = false" />
 
       <!-- ── SIDEBAR ── -->
-      <aside class="pos-sidebar" :class="{ 'is-open': sidebarOpen }" v-show="sidebarOpen || !isMobile">
+      <aside class="pos-sidebar" :class="{ 'is-open': sidebarOpen }" v-show="isMobile || sidebarOpen">
         <div class="pos-sidebar__head">
           <span class="pos-overline">Filtros</span>
           <button class="pos-clear-btn" @click="limpiarFiltros">Limpiar</button>
