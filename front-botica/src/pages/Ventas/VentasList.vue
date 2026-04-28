@@ -6,8 +6,13 @@
   <q-page class="pos-page">
     <div class="pos-layout">
 
+      <!-- ── BACKDROP (mobile) ── -->
+      <div class="pos-backdrop"
+        :class="{ visible: (sidebarOpen || cartOpen) && isMobile }"
+        @click="sidebarOpen = false; cartOpen = false" />
+
       <!-- ── SIDEBAR ── -->
-      <aside class="pos-sidebar" v-if="sidebarOpen">
+      <aside class="pos-sidebar" :class="{ 'is-open': sidebarOpen }" v-show="sidebarOpen || !isMobile">
         <div class="pos-sidebar__head">
           <span class="pos-overline">Filtros</span>
           <button class="pos-clear-btn" @click="limpiarFiltros">Limpiar</button>
@@ -148,6 +153,12 @@
               <q-icon name="view_list" size="16px" />
             </button>
           </div>
+
+          <!-- Cart toggle (mobile only) -->
+          <button v-if="isMobile" class="pos-cart-toggle" @click="cartOpen = !cartOpen">
+            <q-icon name="shopping_cart" size="18px" />
+            <span v-if="totalItems > 0" class="pos-cart-toggle__badge">{{ totalItems }}</span>
+          </button>
         </div>
 
         <!-- Grid -->
@@ -239,7 +250,7 @@
       </section>
 
       <!-- ── CART PANEL ── -->
-      <aside class="pos-cart">
+      <aside class="pos-cart" :class="{ 'is-open': cartOpen }">
         <div class="pos-cart__head">
           <div>
             <div class="pos-cart__title">Venta actual</div>
@@ -358,9 +369,20 @@ const layoutStore = useLayoutStore();
 const pago = ref("efectivo");
 
 // ── UI ──────────────────────────────────────────
-const sidebarOpen = ref(true);
+const isMobile    = ref(window.innerWidth < 768);
+const sidebarOpen = ref(!isMobile.value);
+const cartOpen    = ref(false);
 const viewMode    = ref('grid');
 const sec         = ref({ cat: true, mal: true, lab: true, area: false });
+
+function onResize() {
+  const mobile = window.innerWidth < 768;
+  if (mobile !== isMobile.value) {
+    isMobile.value = mobile;
+    if (!mobile) { sidebarOpen.value = true; cartOpen.value = false; }
+    else { sidebarOpen.value = false; }
+  }
+}
 
 // ── Filter options (loaded on mount) ─────────────
 const categorias   = ref([]);
@@ -412,8 +434,12 @@ onMounted(async () => {
   layoutStore.closeDrawer();
   tableRef.value.requestServerInteraction();
   loadFiltroData();
+  window.addEventListener('resize', onResize);
 });
-onUnmounted(() => layoutStore.openDrawer());
+onUnmounted(() => {
+  layoutStore.openDrawer();
+  window.removeEventListener('resize', onResize);
+});
 
 watch(searchInput, val => {
   clearTimeout(searchTimer);
@@ -1544,5 +1570,108 @@ function procesarVenta() {
 
   &:hover:not(:disabled) { background: #2a2a2e; }
   &:disabled { background: var(--pos-border-s); cursor: not-allowed; }
+}
+
+/* ── Cart toggle button (mobile) ── */
+.pos-cart-toggle {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--pos-border);
+  background: var(--pos-surface);
+  color: var(--pos-ink-2);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all .12s;
+
+  &:hover { background: var(--pos-surface-2); }
+}
+
+.pos-cart-toggle__badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--pos-accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+}
+
+/* ── Backdrop ── */
+.pos-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 199;
+
+  &.visible { display: block; }
+}
+
+/* ── Mobile responsive ── */
+@media (max-width: 767px) {
+  .pos-layout {
+    position: relative;
+  }
+
+  .pos-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 280px;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    box-shadow: 4px 0 16px rgba(0,0,0,.12);
+
+    &.is-open { transform: translateX(0); }
+  }
+
+  .pos-cart {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100dvh;
+    width: min(340px, 92vw);
+    z-index: 200;
+    transform: translateX(100%);
+    transition: transform .25s ease;
+    box-shadow: -4px 0 16px rgba(0,0,0,.12);
+
+    &.is-open { transform: translateX(0); }
+  }
+
+  .pos-toolbar {
+    padding: 10px 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pos-toolbar__info { display: none; }
+
+  .pos-search-box {
+    order: 10;
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+
+  .pos-sort-select { font-size: 12px; padding: 7px 8px; }
+
+  .pos-grid-area { padding: 12px; }
+
+  .pos-qtable :deep(.q-table__grid-content) {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+  }
 }
 </style>
