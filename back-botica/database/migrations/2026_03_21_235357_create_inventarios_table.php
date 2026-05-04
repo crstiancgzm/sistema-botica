@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('inventarios', function (Blueprint $table) {
             $table->id();
             $table->string('nombre')->nullable();
+            $table->string('nombre_principio_activo')->nullable();
             $table->string('codigo')->nullable();
             $table->integer('cantidad')->nullable();
             $table->boolean('flag_blister')->nullable()->default(false);

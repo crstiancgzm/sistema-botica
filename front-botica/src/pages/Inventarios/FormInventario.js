@@ -2,6 +2,7 @@ const formInventarios = {
   inventario: {
     id: '',
     nombre: '',
+    nombre_principio_activo: '',
     codigo: '',
     cantidad: '',
     presentacion: '',

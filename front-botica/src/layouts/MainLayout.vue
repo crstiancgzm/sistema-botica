@@ -76,7 +76,7 @@
           <q-btn v-if="$q.screen.gt.sm" round dense flat color="text-grey-7" icon="apps">
             <q-tooltip>Google Apps</q-tooltip>
           </q-btn>
-          <SwitchDarkMode v-if="$q.screen.gt.sm" />
+          <SwitchDarkMode  />
           <q-btn v-if="$q.screen.gt.sm" round dense flat icon="notifications">
             <q-badge text-color="white" floating>
               2

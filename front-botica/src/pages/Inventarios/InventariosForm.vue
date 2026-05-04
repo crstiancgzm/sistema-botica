@@ -1,6 +1,6 @@
 <template>
 
-  <q-card :style="{ width: '100%', maxWidth: $q.screen.gt.sm ? '40vw' : '100vw' }" class="shadow-1">
+  <q-card :style="{ width: '100%', maxWidth: $q.screen.gt.sm ? '45vw' : '100vw' }" class="shadow-1">
     <q-card-section class="bg-primary">
       <div class="row text-white">
         <div style="font-size: large;">{{ title }}</div>
@@ -40,15 +40,15 @@
                 </template>
               </q-input>
             </div>
-            <div class="col-12 col-md-4">
-              <q-input dense outlined v-model="form.inventario.codigo" label="Codigo"
-                @change="form.validate(propPath + '.codigo')" :error="form.invalid(propPath + '.codigo')"
-                :class="form.invalid(propPath + '.codigo') ? 'q-mb-sm' : ''">
+            <div class="col-12 col-md-12">
+              <q-input dense outlined v-model="form.inventario.nombre_principio_activo" label="Nombre del principio activo"
+                @change="form.validate(propPath + '.nombre_principio_activo')" :error="form.invalid(propPath + '.nombre_principio_activo')"
+                :class="form.invalid(propPath + '.nombre_principio_activo') ? 'q-mb-sm' : ''">
                 <template v-slot:prepend>
                   <q-icon name="description" />
                 </template>
                 <template v-slot:error>
-                  <div>{{ form.errors[propPath + '.codigo'] }}</div>
+                  <div>{{ form.errors[propPath + '.nombre_principio_activo'] }}</div>
                 </template>
               </q-input>
             </div>

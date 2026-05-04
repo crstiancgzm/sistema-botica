@@ -14,6 +14,7 @@ class Inventario extends Model
 
     protected $fillable = [
         'nombre',
+        'nombre_principio_activo',
         'codigo',
         'cantidad',
         'flag_blister',

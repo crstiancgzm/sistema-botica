@@ -3,7 +3,7 @@
     <q-card class="column" style="max-width: 100vw">
 
       <!-- Header -->
-      <q-card-section class="bg-primary text-white row items-center q-py-sm">
+      <q-card-section class="bg-cyan-8 text-white row items-center q-py-sm">
         <q-icon name="bi-upc-scan" size="24px" class="q-mr-sm" />
         <span class="text-h6 text-weight-bold">Generador de Códigos de Barras</span>
         <q-space />
@@ -11,15 +11,14 @@
       </q-card-section>
 
       <!-- Toolbar -->
-      <q-card-section class="q-py-sm q-px-md row items-center q-gutter-sm">
+      <q-card-section class="q-py-sm q-px-md row items-center q-gutter-sm col-wrap">
         <q-input
           v-model="search"
-          standout="bg-primary text-white"
+          standout="bg-cyan-8 text-white"
           dense debounce="500"
           placeholder="Buscar producto..."
-          style="min-width: 250px"
+          style="min-width: 800px"
         >
-          <template v-slot:prepend><q-icon name="search" color="white" /></template>
           <template v-slot:append>
             <q-icon v-if="search" name="close" class="cursor-pointer" @click="search = ''" />
           </template>
@@ -46,7 +45,7 @@
         />
 
         <q-btn
-          color="primary"
+          color="cyan-8"
           icon="bi-file-earmark-pdf"
           label="Generar PDF"
           :disable="seleccionados.length === 0 || generando"
@@ -146,7 +145,7 @@ const generando = ref(false)
 const search   = ref('')
 const rows     = ref([])
 const pagination = ref({
-  sortBy: 'nombre', descending: false, page: 1, rowsPerPage: 10, rowsNumber: 0,
+  sortBy: 'nombre', descending: false, page: 1, rowsPerPage: 14, rowsNumber: 0,
 })
 
 // ─── Selección persistente entre páginas ─────────────────────────────────────
