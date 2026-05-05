@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             InventarioSeeder::class,
             PermissionSeeder::class,
             ClientTokenSeeder::class,
+            PermisosFuncionalidadSeeder::class,
         ]);
     }
 }

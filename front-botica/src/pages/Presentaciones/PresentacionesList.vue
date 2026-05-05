@@ -81,7 +81,7 @@
             {{ col.value }}
           </q-td>
           <q-td auto-width>
-            <q-btn  v-if="userStore.hasPermission('admin-presentacion-editar')"
+            <q-btn v-if="userStore.hasPermission('admin-presentacion-editar')"
               size="sm"
               text-color="cyan-8"
               color="cyan-1"
@@ -90,15 +90,6 @@
               @click="editar(props.row.id)"
               icon="edit"
               class="q-mr-xs"
-            />
-            <q-btn v-if="userStore.hasPermission('admin-presentacion-eliminar')"
-              size="sm"
-              text-color="red-13"
-              color="red-1"
-              outline
-              round
-              @click="eliminar(props.row.id)"
-              icon="delete"
             />
           </q-td>
         </q-tr>

@@ -122,6 +122,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { date } from 'quasar'
 import CajaService from 'src/services/CajaService'
+import { useUserStore } from "src/stores/user-store";
+const userStore = useUserStore();
 
 const router = useRouter()
 

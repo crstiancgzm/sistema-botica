@@ -206,7 +206,8 @@
                   @click="toggleExpand(props.row.id)">
                   <q-tooltip>Ver productos</q-tooltip>
                 </q-btn>
-                <q-btn flat round dense size="sm" color="primary" icon="bi-printer"
+                <q-btn v-if="userStore.hasPermission('admin-caja-reimprimir')" 
+                  flat round dense size="sm" color="primary" icon="bi-printer"
                   @click="reimprimir(props.row)">
                   <q-tooltip>Reimprimir boleta</q-tooltip>
                 </q-btn>

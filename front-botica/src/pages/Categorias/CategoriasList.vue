@@ -81,7 +81,7 @@
             {{ col.value }}
           </q-td>
           <q-td auto-width>
-            <q-btn
+            <q-btn v-if="userStore.hasPermission('admin-categoria-editar')"
               size="sm"
               text-color="cyan-8"
               color="cyan-1"
@@ -91,7 +91,7 @@
               icon="edit"
               class="q-mr-xs"
             />
-            <q-btn
+            <q-btn v-if="userStore.hasPermission('admin-categoria-eliminar')"
               size="sm"
               text-color="red-13"
               color="red-1"
@@ -114,6 +114,8 @@ import CategoriaService from "src/services/CategoriaService";
 import { useQuasar } from "quasar";
 import CategoriasForm from "src/pages/Categorias/CategoriasForm.vue";
 const $q = useQuasar();
+import { useUserStore } from "src/stores/user-store";
+const userStore = useUserStore();
 const columns = [
   {
     name: "id",

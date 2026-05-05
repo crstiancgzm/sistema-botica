@@ -28,7 +28,8 @@
             :disable="loading" @click="abrirGeneradorBarcodes" />
           <q-btn v-if="$q.screen.gt.sm" flat outline color="grey-6" icon="bi-download" no-caps
             label="Exportar" :disable="true" />
-          <q-btn color="primary" unelevated icon-right="add" no-caps
+          <q-btn v-if="userStore.hasPermission('admin-inventario-crear')"
+            color="primary" unelevated icon-right="add" no-caps
             :label="$q.screen.lt.sm ? 'Agregar Producto' : 'Agregar producto'"
             :disable="loading"
             @click="{ formInventarios = true; edit = false; title = 'REGISTRAR PRODUCTO'; editId = null; }" />
@@ -282,11 +283,13 @@
                 icon="bi-eye" class="q-mr-xs" @click="verDetalle(props.row.id)">
                 <q-tooltip>Ver detalle</q-tooltip>
               </q-btn>
-              <q-btn size="sm" color="cyan-1" text-color="cyan-8" outline round
+              <q-btn v-if="userStore.hasPermission('admin-inventario-editar')" 
+                size="sm" color="cyan-1" text-color="cyan-8" outline round
                 icon="bi-pencil" class="q-mr-xs" @click="editar(props.row.id)">
                 <q-tooltip>Editar</q-tooltip>
               </q-btn>
-              <q-btn size="sm" color="red-1" text-color="red-13" outline round
+              <q-btn v-if="userStore.hasPermission('admin-inventario-eliminar')" 
+                size="sm" color="red-1" text-color="red-13" outline round
                 icon="bi-trash3" @click="eliminar(props.row.id)">
                 <q-tooltip>Eliminar</q-tooltip>
               </q-btn>
@@ -323,6 +326,8 @@ import InventariosForm from "src/pages/Inventarios/InventariosForm.vue";
 import InventarioDetalle from "src/pages/Inventarios/InventarioDetalle.vue";
 import GeneradorBarcodesDialog from "src/pages/Inventarios/GeneradorBarcodesDialog.vue";
 import SelectGeneralAsyncrono from "src/components/selectGeneralAsyncrono.vue";
+import { useUserStore } from "src/stores/user-store";
+const userStore = useUserStore();
 
 const $q      = useQuasar();
 const API_URL = process.env.API_BACKEND_URL;

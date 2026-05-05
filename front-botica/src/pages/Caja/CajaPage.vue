@@ -27,7 +27,7 @@
             {{ cajaAbierta?.id ? `Caja ${cajaAbierta.turno ? '· ' + cajaAbierta.turno : ''} abierta` : 'Caja cerrada' }}
           </div>
 
-          <q-btn
+          <q-btn v-if="userStore.hasPermission('admin-caja-ver')"
             flat
             round
             dense
@@ -156,7 +156,7 @@
                 </div>
               </div>
 
-              <q-btn
+              <q-btn v-if="userStore.hasPermission('admin-caja-cerrar')"
                 unelevated
                 no-caps
                 icon="bi-lock-fill"
@@ -178,7 +178,7 @@
               </div>
 
               <template v-if="turnos.length > 0">
-                <q-btn
+                <q-btn v-if="userStore.hasPermission('admin-caja-abrir')"
                   unelevated
                   no-caps
                   icon="bi-unlock-fill"
@@ -438,7 +438,7 @@ import { useQuasar, date } from 'quasar';
 import CajaService from 'src/services/CajaService';
 
 const $q = useQuasar();
-
+const userStore = useUserStore(); 
 const loading = ref(false);
 const guardando = ref(false);
 const cajaAbierta = ref(null);
