@@ -32,11 +32,11 @@ class RolController extends Controller
 
     public function show(Role $role)
     {
-        return response()->json($role);
-        // return response()->json([
-        //     'rol' => $role,
-        //     'permisosSelected' => $role->permissions->pluck('id'),
-        // ]);
+        // return response()->json($role);
+        return response()->json([
+            'rol' => $role,
+            'permisosSelected' => $role->permissions->pluck('id'),
+        ]);
     }
 
     public function update(StoreRolRequest $request,  Role $role)

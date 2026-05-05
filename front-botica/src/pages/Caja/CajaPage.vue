@@ -438,6 +438,7 @@ import { useQuasar, date } from 'quasar';
 import CajaService from 'src/services/CajaService';
 
 const $q = useQuasar();
+import { useUserStore } from "src/stores/user-store";
 const userStore = useUserStore(); 
 const loading = ref(false);
 const guardando = ref(false);

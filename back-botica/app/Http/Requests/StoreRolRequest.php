@@ -19,11 +19,12 @@ class StoreRolRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+
     public function rules(): array
     {
-        return [
-            'rol.name' => 'required|unique:roles,name,' . $this->id,
 
+        return [
+            'rol.name' => 'required|unique:roles,name,' . $this->input('rol.id'),
         ];
     }
 }

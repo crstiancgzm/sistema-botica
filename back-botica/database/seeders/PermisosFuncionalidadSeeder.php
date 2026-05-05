@@ -47,7 +47,8 @@ class PermisosFuncionalidadSeeder extends Seeder
             //categoria ventas
             
             //categoria de cajas
-            ['name' => 'admin-caja-ver', 'description' => 'abrir caja'],
+            ['name' => 'admin-caja-ver', 'description' => 'ver caja'],
+            ['name' => 'admin-caja-abrir', 'description' => 'abrir caja'],
             ['name' => 'admin-caja-cerrar', 'description' => 'cerrar caja'],
             ['name' => 'admin-caja-reimprimir', 'description' => 'cerrar caja'],
             

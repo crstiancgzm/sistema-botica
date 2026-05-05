@@ -190,9 +190,14 @@ async function editar(id) {
   edit.value = true;
   editId.value = id;
   const row = await RolService.get(id);
-  console.log(row);
+  // console.log(row);
 
-  rolesformRef.value.form.setData({rol:row});
+  rolesformRef.value.form.setData({rol:{
+    id: row.rol.id,
+    name: row.rol.name,
+    permisosSelected: row.permisosSelected,
+  }
+  });
 }
 
 async function eliminar(id) {
