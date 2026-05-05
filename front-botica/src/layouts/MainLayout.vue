@@ -104,57 +104,67 @@
       <q-scroll-area class="fit">
         <q-list padding :class="$q.dark.isActive ? 'text-white' : 'text-grey-8'">
           <q-item-label class="text-subtitle2 text-bold q-ml-md q-mb-xs">Menú Principal</q-item-label>
-          <q-item class="GNL__drawer-item" active-class="GNL__my-menu-link" v-ripple v-for="link in menuList.links1" :key="link.text" clickable @click="enlace = link.text" :to="{ name: link.text }" :active="enlace === link.text">
-            <q-item-section avatar>
-              <q-icon :color='$q.dark.isActive ? "white" : "dark"' :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
+          <template v-for="link in menuList.links1" :key="link.text">
+            <q-item v-if="!link.permission || userStore.hasPermission(link.permission)" class="GNL__drawer-item" active-class="GNL__my-menu-link" v-ripple clickable @click="enlace = link.text" :to="{ name: link.text }" :active="enlace === link.text">
+              <q-item-section avatar>
+                <q-icon :color='$q.dark.isActive ? "white" : "dark"' :name="link.icon" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ link.text }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
           <q-separator inset class="q-my-sm" />
           <q-item-label class="text-subtitle2 text-bold q-ml-md q-mb-xs">Roles y Permisos</q-item-label>
-          <q-item class="GNL__drawer-item" active-class="GNL__my-menu-link" v-ripple v-for="link in menuList.links2" :key="link.text" clickable @click="enlace = link.text" :to="{ name: link.text }" :active="enlace === link.text">
-            <q-item-section avatar>
-              <q-icon :color='$q.dark.isActive ? "white" : "dark"' :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
+          <template v-for="link in menuList.links2" :key="link.text">
+            <q-item v-if="!link.permission || userStore.hasPermission(link.permission)" class="GNL__drawer-item" active-class="GNL__my-menu-link" v-ripple clickable @click="enlace = link.text" :to="{ name: link.text }" :active="enlace === link.text">
+              <q-item-section avatar>
+                <q-icon :color='$q.dark.isActive ? "white" : "dark"' :name="link.icon" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ link.text }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
 
           <q-separator inset class="q-my-sm" />
           <q-item-label class="text-subtitle2 text-bold q-ml-md q-mb-xs">Modulo Inventario</q-item-label>
-          <q-item class="GNL__drawer-item" active-class="GNL__my-menu-link" v-ripple v-for="link in menuList.links3" :key="link.text" clickable @click="enlace = link.text" :to="{ name: link.text }" :active="enlace === link.text">
-            <q-item-section avatar>
-              <q-icon :color='$q.dark.isActive ? "white" : "dark"' :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
+          <template v-for="link in menuList.links3" :key="link.text">
+            <q-item v-if="!link.permission || userStore.hasPermission(link.permission)" class="GNL__drawer-item" active-class="GNL__my-menu-link" v-ripple clickable @click="enlace = link.text" :to="{ name: link.text }" :active="enlace === link.text">
+              <q-item-section avatar>
+                <q-icon :color='$q.dark.isActive ? "white" : "dark"' :name="link.icon" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ link.text }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
 
           <q-separator inset class="q-my-sm" />
           <q-item-label class="text-subtitle2 text-bold q-ml-md q-mb-xs text-primary">Modulo Alquiler</q-item-label>
-          <q-item class="GNL__drawer-item" active-class="GNL__my-menu-link" v-ripple v-for="link in menuList.links4" :key="link.text" clickable @click="enlace = link.text" :to="{ name: link.text }" :active="enlace === link.text">
-            <q-item-section avatar>
-              <q-icon :color='$q.dark.isActive ? "white" : "grey-8"' :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
+          <template v-for="link in menuList.links4" :key="link.text">
+            <q-item v-if="!link.permission || userStore.hasPermission(link.permission)" class="GNL__drawer-item" active-class="GNL__my-menu-link" v-ripple clickable @click="enlace = link.text" :to="{ name: link.text }" :active="enlace === link.text">
+              <q-item-section avatar>
+                <q-icon :color='$q.dark.isActive ? "white" : "grey-8"' :name="link.icon" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ link.text }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
 
           <q-separator inset class="q-my-sm" />
           <q-item-label class="text-subtitle2 text-bold q-ml-md q-mb-xs text-primary">Modulo Reporte</q-item-label>
-          <q-item class="GNL__drawer-item" active-class="GNL__my-menu-link" v-ripple v-for="link in menuList.links5" :key="link.text" clickable @click="enlace = link.text" :to="{ name: link.text }" :active="enlace === link.text">
-            <q-item-section avatar>
-              <q-icon :color='$q.dark.isActive ? "white" : "grey-8"' :name="link.icon" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ link.text }}</q-item-label>
-            </q-item-section>
-          </q-item>
+          <template v-for="link in menuList.links5" :key="link.text">
+            <q-item v-if="!link.permission || userStore.hasPermission(link.permission)" class="GNL__drawer-item" active-class="GNL__my-menu-link" v-ripple clickable @click="enlace = link.text" :to="{ name: link.text }" :active="enlace === link.text">
+              <q-item-section avatar>
+                <q-icon :color='$q.dark.isActive ? "white" : "grey-8"' :name="link.icon" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ link.text }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
 
           <!-- <div class="q-mt-md">
             <div class="flex flex-center q-gutter-xs">
@@ -181,9 +191,11 @@ import menuList from 'src/layouts/MenuList.js'
 import SwitchDarkMode from 'src/components/SwitchDarkMode.vue'
 import NavUser from 'src/components/NavUser.vue'
 import { useLayoutStore } from 'src/stores/layout-store'
+import { useUserStore } from 'src/stores/user-store'
 import { useRoute } from "vue-router"
 
 const layoutStore = useLayoutStore()
+const userStore = useUserStore()
 
 const route = useRoute();
 const enlace = ref(route.name);

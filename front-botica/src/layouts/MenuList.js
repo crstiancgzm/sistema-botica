@@ -1,34 +1,31 @@
 const links1 = [
   { icon: 'dashboard', text: 'Dashboard', route: 'Dashboard' },
-//   { icon: 'person', text: 'For you' },
-//   { icon: 'star_border', text: 'Favourites' },
-//   { icon: 'search', text: 'Saved searches' }
 ];
 
 const links2 = [
-    { icon: 'bi-building', text: 'Areas' },
-    { icon: 'bi-people-fill', text: 'Usuarios' },
-    { icon: 'bi-person-fill-lock', text: 'Roles' },
-    { icon: 'bi-person-fill-lock', text: 'Permisos' },
+    { icon: 'bi-building', text: 'Areas', permission: 'admin-area-index' },
+    { icon: 'bi-people-fill', text: 'Usuarios', permission: 'admin-usuarios-index' },
+    { icon: 'bi-person-fill-lock', text: 'Roles', permission: 'admin-roles-index' },
+    { icon: 'bi-person-fill-lock', text: 'Permisos', permission: 'admin-permisos-index' },
 ];
 
 const links3 = [
-    { icon: 'bi-file-earmark-text', text: 'Presentaciones' },
-    { icon: 'bi-file-earmark-text', text: 'Categorias' },
-    { icon: 'bi-file-earmark-text', text: 'Categoria Malestar' },
-    { icon: 'bi-file-earmark-text', text: 'Laboratorios' },
-    { icon: 'bi-ui-checks', text: 'Proveedores' },
-    { icon: 'bi-basket-fill', text: 'Inventario' },
+    { icon: 'bi-file-earmark-text', text: 'Presentaciones', permission: 'admin-presentacion-index' },
+    { icon: 'bi-file-earmark-text', text: 'Categorias', permission: 'admin-categoria-index' },
+    { icon: 'bi-file-earmark-text', text: 'Categoria Malestar', permission: 'admin-categoria-malestar-index' },
+    { icon: 'bi-file-earmark-text', text: 'Laboratorios', permission: 'admin-laboratorio-index' },
+    { icon: 'bi-ui-checks', text: 'Proveedores', permission: 'admin-proveedor-index' },
+    { icon: 'bi-basket-fill', text: 'Inventario', permission: 'admin-inventario-index' },
 ];
 
 const links4 = [
-    // { icon: 'bi-people-fill', text: 'Clientes' },
-    { icon: 'bi-shop', text: 'Venta' },
-    { icon: 'bi-bank', text: 'Caja' },
-    { icon: 'bi-bank', text: 'Historial' },
+    { icon: 'bi-shop', text: 'Venta', permission: 'admin-venta-index' },
+    { icon: 'bi-bank', text: 'Caja', permission: 'admin-caja-index' },
+    { icon: 'bi-bank', text: 'Historial', permission: 'admin-historial-index' },
 ];
+
 const links5 = [
-    { icon: 'bi-graph-up', text: 'Reportes' },
+    { icon: 'bi-graph-up', text: 'Reportes', permission: 'admin-reporte-index' },
 ];
 
 export default {

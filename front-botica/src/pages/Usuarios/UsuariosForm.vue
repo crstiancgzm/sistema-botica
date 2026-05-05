@@ -88,7 +88,7 @@
           :id="form.area_id || idSelectArea"
           @selectedItem="updateArea($event)"
         ></SelectArea> -->
-        <div class="row q-col-gutter-xs q-ma-xs"  v-if="userStore.hasPermission('admin-permisos')">
+        <div class="row q-col-gutter-xs q-ma-xs"  >
         <div class="col-12 col-md-6">
           <q-card class="q-pa-md"  flat bordered>
             <div class="q-mb-md text-center">Roles</div>
