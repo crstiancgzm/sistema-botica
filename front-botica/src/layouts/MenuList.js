@@ -26,6 +26,7 @@ const links4 = [
 
 const links5 = [
     { icon: 'bi-graph-up', text: 'Reportes', permission: 'admin-reporte-index' },
+    { icon: 'bi-file-earmark-text', text: 'Auditoria' },
 ];
 
 export default {

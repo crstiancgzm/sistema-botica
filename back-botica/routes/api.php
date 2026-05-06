@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuditController;
 use App\Http\Controllers\AreaController;
 use App\Http\Controllers\CajaController;
 use App\Http\Controllers\CategoriaController;
@@ -61,4 +62,7 @@ Route::middleware(['auth:api', 'check.active'])->group(function () {
 
     // Ventas
     Route::post('ventas', [VentaController::class, 'store']);
+
+    // Auditoría
+    Route::get('auditoria', [AuditController::class, 'index']);
 });

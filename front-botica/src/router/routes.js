@@ -93,6 +93,11 @@ const routes = [
         name: 'CajaDetalle',
         component: () => import('pages/Caja/CajaDetalle.vue')
       },
+      {
+        path: 'auditoria',
+        name: 'Auditoria',
+        component: () => import('pages/Auditoria/AuditoriaList.vue')
+      },
       // {
       //   path: 'alquiler/:id',
       //   name: 'grupo-alquiler',
