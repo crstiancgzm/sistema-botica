@@ -37,6 +37,7 @@ class UserController extends Controller
             'user' => $usuario,
             'rolesSelected' => $usuario->roles->pluck('id'),
             'permisosSelected' => $usuario->permissions->pluck('id'),
+            'permissionsData' => $usuario->permissions,
         ]);
         // $data = [
         //     'user' => $usuario,

@@ -242,7 +242,7 @@ const loading = ref(false)
 const rows = ref([])
 const usuarios = ref([])
 const pagination = ref({
-  sortBy: 'fecha', descending: true, page: 1, rowsPerPage: 15, rowsNumber: 0,
+  sortBy: 'fecha', descending: true, page: 1, rowsPerPage: 12, rowsNumber: 0,
 })
 
 const filtros = ref({
@@ -342,7 +342,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .my-sticky-header-table
   /* height or max-height is important */
 

@@ -149,7 +149,7 @@ const filter = ref("");
 const loading = ref(false);
 const pagination = ref({
   sortBy: "id",
-  descending: false,
+  descending: true,
   page: 1,
   rowsPerPage: 9,
   rowsNumber: 10,

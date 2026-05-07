@@ -21,6 +21,10 @@ class InventarioService {
         }
     }
 
+    static async updateStock(id, cantidad) {
+        return (await api.patch(`api/inventarios/${id}/stock`, { cantidad })).data;
+    }
+
     static async getRelacionados(id) {
         return (await api.get(`/api/inventarios/${id}/relacionados`)).data;
     }

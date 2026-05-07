@@ -287,7 +287,10 @@
                 <q-icon name="mdi-pill" size="16px" style="color:var(--pos-ink-4)" />
               </div>
               <div class="pos-cart-item__body">
-                <div class="pos-cart-item__name">{{ item.nombre }}</div>
+                <div class="pos-cart-item__name">
+                  {{ item.nombre }}
+                  <q-tooltip>{{ item.nombre }}</q-tooltip>
+                </div>
                 <div class="pos-cart-item__sub">
                   <span class="pos-code">#{{ item.codigo ?? item.id }}</span>
                   <span>·</span>
@@ -405,7 +408,7 @@ const columns    = [
   { name: 'fecha_vencimiento', field: r => r.fecha_vencimiento, sortable: true },
 ];
 const pagination = ref({
-  sortBy: 'id', descending: true, page: 1, rowsPerPage: 12, rowsNumber: 0,
+  sortBy: 'id', descending: true, page: 1, rowsPerPage: 24, rowsNumber: 0,
 });
 
 // ── Filters ──────────────────────────────────────
@@ -1138,11 +1141,7 @@ function procesarVenta() {
   font-weight: 600;
   color: var(--pos-ink);
   line-height: 1.3;
-  min-height: 36px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  word-break: break-word;
 }
 
 .pos-card__meta-row {
@@ -1404,15 +1403,13 @@ function procesarVenta() {
   flex-shrink: 0;
 }
 
-.pos-cart-item__body { flex: 1; min-width: 0; }
+.pos-cart-item__body { flex: 1; min-width: 0; overflow: hidden; }
 
 .pos-cart-item__name {
   font-size: 12.5px;
   font-weight: 600;
   color: var(--pos-ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  word-break: break-word;
 }
 
 .pos-cart-item__sub {

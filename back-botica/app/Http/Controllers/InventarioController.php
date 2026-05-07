@@ -115,6 +115,13 @@ class InventarioController extends Controller
         return response()->json($inventario);
     }
 
+    public function updateStock(Request $request, Inventario $inventario)
+    {
+        $request->validate(['cantidad' => 'required|integer|min:0']);
+        $inventario->update(['cantidad' => $request->cantidad]);
+        return response()->json($inventario);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

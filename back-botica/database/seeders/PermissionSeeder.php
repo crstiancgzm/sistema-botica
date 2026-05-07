@@ -101,11 +101,13 @@ class PermissionSeeder extends Seeder
         ]);
         $user->assignRole('Administrador');
 
-        $user = User::create([
-            'name' => 'password',
-            'email' => 'user@gmail.com',
-            'password' => bcrypt('user@gmail.com'),
-        ]);
+        // $user = User::create([
+        //     'name' => 'password',
+        //     'email' => 'user@gmail.com',
+        //     'password' => bcrypt('user@gmail.com'),
+        // ]);
+
+        
 
     }
 }

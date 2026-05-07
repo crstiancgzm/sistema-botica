@@ -249,18 +249,44 @@
 
           <!-- Stock -->
           <template v-slot:body-cell-cantidad="props">
-            <q-td :props="props" class="text-center">
-              <span v-if="props.row.cantidad === 0" class="stock-pill stock-pill--empty">
-                <i class="stock-dot" />Sin stock
-              </span>
-              <span v-else-if="stockBajo(props.row)" class="stock-pill stock-pill--low">
-                <i class="stock-dot" />{{ props.row.cantidad }} uds · bajo
-                <q-tooltip v-if="props.row.fecha_vencimiento">Vence: {{ props.row.fecha_vencimiento?.slice(0, 10) }}</q-tooltip>
-              </span>
-              <span v-else class="stock-pill stock-pill--ok">
-                <i class="stock-dot" />{{ props.row.cantidad }} uds
-                <q-tooltip v-if="props.row.fecha_vencimiento">Vence: {{ props.row.fecha_vencimiento?.slice(0, 10) }}</q-tooltip>
-              </span>
+            <q-td :props="props" class="text-center" style="padding: 6px 8px">
+              <template v-if="editingStock[props.row.id]">
+                <q-input
+                  v-model="editingValues[props.row.id]"
+                  type="number"
+                  dense
+                  outlined
+                  min="0"
+                  style="width: 88px"
+                  :loading="processingStock[props.row.id]"
+                  :error="hasStockError(props.row.id)"
+                  autofocus
+                  @keyup.enter="confirmarStock(props.row)"
+                  @keyup.escape="cancelarStock(props.row.id)"
+                  @blur="confirmarStock(props.row)"
+                >
+                  <template v-slot:error>Debe ser ≥ 0</template>
+                </q-input>
+              </template>
+              <template v-else>
+                <div
+                  :class="userStore.hasPermission('admin-inventario-editar') ? 'cursor-pointer stock-editable' : ''"
+                  @click="userStore.hasPermission('admin-inventario-editar') && iniciarEditStock(props.row)"
+                >
+                  <span v-if="props.row.cantidad === 0" class="stock-pill stock-pill--empty">
+                    <i class="stock-dot" />Sin stock
+                  </span>
+                  <span v-else-if="stockBajo(props.row)" class="stock-pill stock-pill--low">
+                    <i class="stock-dot" />{{ props.row.cantidad }} uds · bajo
+                    <q-tooltip v-if="props.row.fecha_vencimiento">Vence: {{ props.row.fecha_vencimiento?.slice(0, 10) }}</q-tooltip>
+                  </span>
+                  <span v-else class="stock-pill stock-pill--ok">
+                    <i class="stock-dot" />{{ props.row.cantidad }} uds
+                    <q-tooltip v-if="props.row.fecha_vencimiento">Vence: {{ props.row.fecha_vencimiento?.slice(0, 10) }}</q-tooltip>
+                  </span>
+                  <q-tooltip v-if="userStore.hasPermission('admin-inventario-editar')">Clic para editar stock</q-tooltip>
+                </div>
+              </template>
             </q-td>
           </template>
 
@@ -315,7 +341,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, reactive, computed, onMounted } from "vue";
 import InventarioService from "src/services/InventarioService";
 import LaboratorioService from "src/services/LaboratorioService";
 import CategoriaService from "src/services/CategoriaService";
@@ -333,15 +359,15 @@ const $q      = useQuasar();
 const API_URL = process.env.API_BACKEND_URL;
 
 const columns = [
-  { name: "avatar",         label: "",              field: "nombre",                      align: "left",   sortable: false },
-  { name: "producto",       label: "Producto",      field: (r) => r.nombre,               align: "left",   sortable: true  },
-  { name: "laboratorio",    label: "Laboratorio",   field: (r) => r.laboratorio?.nombre,  align: "left",   sortable: false },
-  { name: "presentacion",   label: "Presentación",  field: (r) => r.presentacion?.nombre, align: "left",   sortable: false },
-  { name: "categorias",     label: "Categorías",    field: (r) => r.categorias,           align: "left",   sortable: false },
-  { name: "cantidad",       label: "Stock",         field: (r) => r.cantidad,             align: "center", sortable: true  },
-  { name: "precio_unidad", label: "Precio Unidad",        field: (r) => r.precio_unidad,       align: "right",  sortable: true  },
-  { name: "precio_blister", label: "Precio Blister",        field: (r) => r.precio_blister,       align: "right",  sortable: true  },
-  { name: "acciones",       label: "Acciones",      field: "id",                          align: "right",  sortable: false },
+  { name: "avatar",         label: "",              field: "nombre",                      align: "left",   sortable: false, style: "width:52px",  headerStyle: "width:52px"  },
+  { name: "producto",       label: "Producto",      field: (r) => r.nombre,               align: "left",   sortable: true,  style: "width:260px; overflow-wrap:break-word; white-space:normal;", headerStyle: "width:260px" },
+  { name: "cantidad",       label: "Stock",         field: (r) => r.cantidad,             align: "center", sortable: true,  style: "width:130px", headerStyle: "width:130px" },
+  { name: "laboratorio",    label: "Laboratorio",   field: (r) => r.laboratorio?.nombre,  align: "left",   sortable: false, style: "width:140px", headerStyle: "width:140px" },
+  { name: "presentacion",   label: "Presentación",  field: (r) => r.presentacion?.nombre, align: "left",   sortable: false, style: "width:120px", headerStyle: "width:120px" },
+  { name: "categorias",     label: "Categorías",    field: (r) => r.categorias,           align: "left",   sortable: false, style: "width:160px", headerStyle: "width:160px" },
+  { name: "precio_unidad",  label: "Precio Unidad", field: (r) => r.precio_unidad,        align: "right",  sortable: true,  style: "width:110px", headerStyle: "width:110px" },
+  { name: "precio_blister", label: "Precio Blister",field: (r) => r.precio_blister,       align: "right",  sortable: true,  style: "width:110px", headerStyle: "width:110px" },
+  { name: "acciones",       label: "Acciones",      field: "id",                          align: "right",  sortable: false, style: "width:110px", headerStyle: "width:110px" },
 ];
 
 const tableRef           = ref();
@@ -357,7 +383,7 @@ const filter             = ref("");
 const loading            = ref(false);
 const showFiltros        = ref(false);
 const filtros            = ref({ laboratorio: null, categoria: null, subcategoria: null, area: null, flag_blister: false });
-const pagination         = ref({ sortBy: "id", descending: true, page: 1, rowsPerPage: 10, rowsNumber: 0 });
+const pagination         = ref({ sortBy: "id", descending: true, page: 1, rowsPerPage: 10, rowsNumber: 10 });
 const stats              = ref({ total: 0, sinStock: 0, stockBajo: 0, valorTotal: 0 });
 const categoriasStats    = ref([]);
 
@@ -480,6 +506,45 @@ async function onRequest(props) {
   rows.value.splice(0, rows.value.length, ...data);
   pagination.value = { ...pagination.value, rowsNumber: total || data.length, page, rowsPerPage, sortBy, descending };
   loading.value = false;
+}
+
+const editingStock   = reactive({});
+const editingValues  = reactive({});
+const processingStock = reactive({});
+
+function hasStockError(id) {
+  const v = editingValues[id];
+  if (v === undefined || v === '') return false;
+  const n = Number(v);
+  return !Number.isInteger(n) || n < 0;
+}
+
+function iniciarEditStock(row) {
+  editingValues[row.id] = String(row.cantidad);
+  editingStock[row.id]  = true;
+}
+
+function cancelarStock(id) {
+  delete editingStock[id];
+  delete editingValues[id];
+  delete processingStock[id];
+}
+
+async function confirmarStock(row) {
+  if (!editingStock[row.id] || processingStock[row.id]) return;
+  const val = Number(editingValues[row.id]);
+  if (editingValues[row.id] === '' || !Number.isInteger(val) || val < 0) return;
+  if (val === row.cantidad) { cancelarStock(row.id); return; }
+  processingStock[row.id] = true;
+  try {
+    await InventarioService.updateStock(row.id, val);
+    row.cantidad = val;
+    cancelarStock(row.id);
+    fetchStats();
+  } catch {
+    $q.notify({ type: 'negative', message: 'Error al actualizar el stock', position: 'top-right', progress: true, timeout: 2000 });
+    delete processingStock[row.id];
+  }
 }
 
 onMounted(() => {
@@ -665,6 +730,11 @@ body.body--dark .stock-pill--empty .stock-dot { background: #ef4444; }
 .tabs-scroll::-webkit-scrollbar { display: none; }
 .flex-shrink-0 { flex-shrink: 0; }
 
+
+/* ── Stock editable hover ─────────────────────────── */
+.stock-editable { border-radius: 20px; transition: opacity .15s; }
+.stock-editable:hover { opacity: .75; }
+
 /* ── Transition ────────────────────────────────────── */
 .slide-down-enter-active,
 .slide-down-leave-active { transition: all 0.2s ease; overflow: hidden; }
@@ -677,6 +747,10 @@ body.body--dark .stock-pill--empty .stock-dot { background: #ef4444; }
 <style lang="sass">
 .inv-table
   height: 68vh
+
+  .q-table
+    table-layout: fixed
+    width: 100%
 
   thead tr th
     position: sticky

@@ -147,6 +147,10 @@ const props = defineProps({
     type: String,
     default: 'primary',
   },
+  excludeIds: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 // Refs
@@ -251,13 +255,12 @@ const filterFn = async (val, update, abort) => {
     // })
 
     const filteredOptions = response.value.data.filter((v) => {
+      if (props.excludeIds.includes(v[props.optionValue])) return false
       return props.filterFields.some(field =>
-        // String(v[field] ?? '').includes(needle.value)
-          String(v[field] ?? '').toLowerCase().includes(needle.value.toLowerCase()) // ✅
-
+        String(v[field] ?? '').toLowerCase().includes(needle.value.toLowerCase())
       )
     })
-    
+
     update(() => {
       options.value = filteredOptions
       totalPage.value = response.value.last_page

@@ -10,7 +10,6 @@
             </q-btn>
         </div>
     </q-card-section>
-    {{ form }}
     <q-form @submit.prevent="submit">
       <q-card-section class="q-pa-md">
         <q-input
@@ -116,42 +115,20 @@
           <q-card class="q-pa-md" flat bordered>
             <div class="q-mb-sm text-center">Permisos</div>
             <div class="q-my-xs" style="align-items: start">
-              <q-select
-                dense
-                outlined
-                v-model="selectedPermiso"
-                clearable
-                use-input
-                hide-selected
-                fill-input
-                input-debounce="0"
+              <SelectGeneralAsync
+                :key="permisoSelectKey"
+                :add="false"
+                optionLabel="description"
+                :filterFields="['description']"
+                :serviceApi="PermisoService"
+                optionValue="id"
                 label="Permisos"
-                :options="permisos"
-                option-label="name"
-                option-value="id"
-              >
-                <template v-slot:prepend>
-                  <q-icon name="mdi-key" />
-                </template>
-                <template v-slot:no-option>
-                  <q-item>
-                    <q-item-section class="text-grey">
-                      No results
-                    </q-item-section>
-                  </q-item>
-                </template>
-                <template v-slot:after>
-                  <q-btn
-                    color="blue"
-                    outline
-                    round
-                    dense
-                    flat
-                    icon="add"
-                    @click="storePermiso"
-                  />
-                </template>
-              </q-select>
+                prependIcon="mdi-key"
+                v-model="newPermiso"
+                v-model:id="newPermisoId"
+                :excludeIds="form.permisosSelected"
+                @option-selected="storePermiso"
+              />
             </div>
             <q-list class="row q-col-gutter-xs">
               <template v-for="(p, i) in filteredPermisos" :key="i">
@@ -160,7 +137,7 @@
                     <q-toggle
                       keep-color
                       v-model="form.permisosSelected"
-                      :label="`${p.name}`"
+                      :label="`${p.description}`"
                       color="secondary"
                       :val="p.id"
                       hide-details
@@ -200,7 +177,6 @@ import { useUserStore } from "src/stores/user-store";
 const userStore = useUserStore();
 const isPwd = ref(true);
 const roles = ref([]);
-const permisos = ref([]);
 const listPermisos = ref([]);
 const emits = defineEmits(["save"]);
 
@@ -244,19 +220,26 @@ if (props.edit) {
   });
 }
 
-const filteredPermisos = computed(() => {
-  return permisos.value.filter((p) => form.permisosSelected.includes(p.id));
-});
+const filteredPermisos = computed(() =>
+  listPermisos.value.filter((p) => form.permisosSelected.includes(p.id))
+);
 
-const selectedPermiso = ref(null);
+const newPermiso = ref(null);
+const newPermisoId = ref(null);
+const permisoSelectKey = ref(0);
 
-const storePermiso = () => {
-  if (selectedPermiso.value) {
-    if (!form.permisosSelected.includes(selectedPermiso.value.id)) {
-      form.permisosSelected.push(selectedPermiso.value.id);
-    }
-    selectedPermiso.value = null;
+const storePermiso = (permiso) => {
+  if (permiso && !form.permisosSelected.includes(permiso.id)) {
+    form.permisosSelected.push(permiso.id);
+    listPermisos.value.push(permiso);
   }
+  newPermiso.value = null;
+  newPermisoId.value = null;
+  permisoSelectKey.value++;
+};
+
+const setPermisoObjects = (permisos) => {
+  listPermisos.value = permisos;
 };
 
 async function cargar() {
@@ -264,16 +247,6 @@ async function cargar() {
     params: { rowsPerPage: 0, order_by: "id" },
   });
   roles.value = data;
-  // console.log(roles.value);
-}
-
-async function permiso() {
-  const { data } = await PermisoService.getData({
-    params: { rowsPerPage: 0, order_by: "id" },
-  });
-  // console.log(data);
-  permisos.value = data;
-  // console.log(permisos.value);
 }
 
 function updateArea(event) {
@@ -288,13 +261,10 @@ function updateArea(event) {
 }
 
 const areaSelectRef = ref("");
-const permisoSelectRef = ref("");
 
 function setValue(values) {
   form.value = values;
   areaSelectRef.value.get(form.value.area_id);
-  // permisoSelectRef.value.get(form.value.permiso_id);
-
   console.log(form.value);
 }
 
@@ -318,17 +288,12 @@ const submit = () => {
 };
 
 onMounted(() => {
-  // setData();
-  console.log(props.edit);
   cargar();
-  permiso();
-  // console.log(form);
-  // console.log(form);
 });
 
 defineExpose({
-  // setData,
   setValue,
+  setPermisoObjects,
   form,
 });
 </script>

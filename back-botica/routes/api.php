@@ -38,6 +38,7 @@ Route::middleware(['auth:api', 'check.active'])->group(function () {
     });
 
     Route::get('inventarios/{inventario}/relacionados', [InventarioController::class, 'relacionados']);
+    Route::patch('inventarios/{inventario}/stock', [InventarioController::class, 'updateStock']);
     Route::apiResource('inventarios', InventarioController::class)->middleware([HandlePrecognitiveRequests::class]);
     Route::apiResource('areas', AreaController::class)->middleware([HandlePrecognitiveRequests::class]);
     Route::apiResource('categorias', CategoriaController::class)->middleware([HandlePrecognitiveRequests::class]);

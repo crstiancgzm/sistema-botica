@@ -23,12 +23,12 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             AreaSeeder::class,
-            CategoriaSeeder::class,
-            SubcategoriaSeeder::class,
-            PresentacionSeeder::class,
-            ProveedorSeeder::class,
-            LaboratorioSeeder::class,
-            InventarioSeeder::class,
+            // CategoriaSeeder::class,
+            // SubcategoriaSeeder::class,
+            // PresentacionSeeder::class,
+            // ProveedorSeeder::class,
+            // LaboratorioSeeder::class,
+            // InventarioSeeder::class,
             PermissionSeeder::class,
             ClientTokenSeeder::class,
             PermisosFuncionalidadSeeder::class,

@@ -193,7 +193,7 @@ const filter = ref("");
 const loading = ref(false);
 const pagination = ref({
   sortBy: "id",
-  descending: false,
+  descending: true,
   page: 1,
   rowsPerPage: 7,
   rowsNumber: 10,
@@ -256,9 +256,7 @@ async function editar(id) {
     area: row.user.area,
     area_id: row.user.area_id,
   });
-
-  // permisosformRef.value.setValue(row);
-  // usuariosformRef.value.setData(row);
+  usuariosformRef.value.setPermisoObjects(row.permissionsData ?? []);
 }
 
 async function toggleActive(row) {

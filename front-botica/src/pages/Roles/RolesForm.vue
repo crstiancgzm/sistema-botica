@@ -1,51 +1,51 @@
 <template>
-    <q-card style=" width: 60%; max-width: 70vw" class="shadow-1">
+  <q-card style=" width: 60%; max-width: 70vw" class="shadow-1">
     <q-card-section class="bg-primary">
-        <div class="row text-white">
+      <div class="row text-white">
         <!-- <div class="row"> -->
-            <div class="text-h6">{{ title }}</div>
-                <q-space />
-            <q-btn v-close-popup round size="sm" unelevated>
-                <q-icon name="close" />
-            </q-btn>
-        </div>
+        <div class="text-h6">{{ title }}</div>
+        <q-space />
+        <q-btn v-close-popup round size="sm" unelevated>
+          <q-icon name="close" />
+        </q-btn>
+      </div>
     </q-card-section>
     <!-- {{ form }} -->
     <q-form @submit.prevent="submit">
       <q-card-section class="q-pb-md">
-        <q-input
-          dense outlined v-model="form.rol.name" :loading="form.validating"
-          label="Nombre" @change="form.validate(propPath + '.name')" :error="form.invalid(propPath + '.name')" :class="form.invalid(propPath + '.name') ? 'q-mb-sm' : ''">
+        <q-input dense outlined v-model="form.rol.name" :loading="form.validating" label="Nombre"
+          @change="form.validate(propPath + '.name')" :error="form.invalid(propPath + '.name')"
+          :class="form.invalid(propPath + '.name') ? 'q-mb-sm' : ''">
           <template v-slot:prepend>
             <q-icon name="mdi-key" />
           </template>
           <template v-slot:error>
-            <div>{{ form.errors[propPath + '.name'] }}</div> 
+            <div>{{ form.errors[propPath + '.name'] }}</div>
           </template>
         </q-input>
 
-          <q-scroll-area style="height: 420px; max-width: 100%">
-          <div class="q-mb-md">
-            <q-list bordered separator>
-              <template v-for="(p, i) in permisos" :key="i">
-                <q-item clickable v-ripple>
-                  <q-item-section>
-                    <q-toggle
-                      checked-icon="check"
-                      keep-color
-                      v-model="form.rol.permisosSelected"
-                      :label="`${p.name}`"
-                      color="primary"
-                      :val="p.id"
-                      hide-details
-                      unchecked-icon="clear"
-                    >
-                    </q-toggle
-                  ></q-item-section>
-                </q-item>
-              </template>
-            </q-list>
-          </div>
+        <q-scroll-area style="height: 420px; max-width: 100%">
+          <q-list bordered separator class="rounded-borders">
+
+            <q-item v-for="(p, i) in permisos" :key="i" tag="label" clickable v-ripple class="q-py-sm">
+              <q-item-section avatar>
+                <q-toggle v-model="form.rol.permisosSelected" :val="p.id" color="primary" checked-icon="check"
+                  unchecked-icon="clear" keep-color />
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label class="text-weight-medium">
+                  {{ p.description }}
+                </q-item-label>
+
+                <q-item-label caption class="text-grey-7">
+                  {{ p.name }}
+                </q-item-label>
+              </q-item-section>
+
+            </q-item>
+
+          </q-list>
         </q-scroll-area>
 
       </q-card-section>
@@ -56,7 +56,7 @@
         <q-btn outline label="Guardar" :loading="form.processing" type="submit" color="positive"></q-btn>
       </q-card-actions>
     </q-form>
-    </q-card>
+  </q-card>
 </template>
 
 <script setup>
@@ -68,11 +68,11 @@ const emits = defineEmits(["save"]);
 const permisos = ref([])
 
 const props = defineProps({
-    propPath: String,
-    title: String,
-    id: {
-        type: Number,
-    },
+  propPath: String,
+  title: String,
+  id: {
+    type: Number,
+  },
 });
 
 const form = ref(null)
@@ -105,9 +105,9 @@ const submit = () => {
 
 
 
-onMounted(()=>{
-    console.log(props);
-    cargar();
+onMounted(() => {
+  console.log(props);
+  cargar();
 });
 
 defineExpose({
@@ -116,6 +116,4 @@ defineExpose({
 
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>
